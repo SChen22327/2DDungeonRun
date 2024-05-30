@@ -7,61 +7,67 @@ import java.util.ArrayList;
 
 public class Player {
     private final double MOVE_AMT = 0.6;
-    private BufferedImage right;
-    private boolean facingRight;
     private double xCoord;
     private double yCoord;
-    private int score;
-    private Animation walk;
+    private ArrayList<AnimationInfo> animations;
+    private Animation currentAnimation;
+    public Player() {
+        animations = new ArrayList<AnimationInfo>();
+        createAnimations();
+    }
 
-    public Player(String idleIMG) {
-        try {
-            right = ImageIO.read(new File(idleIMG));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
-        //The code below is used to programatically create an ArrayList of BufferedImages to use for an Animation object
-        //By creating all the BufferedImages beforehand, we don't have to worry about lagging trying to read image files during gameplay
-        ArrayList<BufferedImage> walk_animation = new ArrayList<>();
+    private void createAnimations() {
+        Animation newAnimation;
+        //idle
+        ArrayList<BufferedImage> idle = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            String filename = "assets/Wolf animations/wolf_walk/tile==" + i + ".png";
+            String filename = "assets/Wolf animations/wolf_idle/tile00" + i + ".png";
             try {
-                walk_animation.add(ImageIO.read(new File(filename)));
+                idle.add(ImageIO.read(new File(filename)));
             }
             catch (IOException e) {
                 System.out.println(e.getMessage());
             }
         }
-        walk = new Animation(walk_animation,66);
-
+        newAnimation = new Animation(idle, 60);
+        animations.add(new AnimationInfo("Idle", newAnimation));
+        currentAnimation = newAnimation;
+        // walk
+        ArrayList<BufferedImage> walk = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            String filename = "assets/Wolf animations/wolf_walk/tile00" + i + ".png";
+            try {
+                walk.add(ImageIO.read(new File(filename)));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(walk,60);
+        animations.add(new AnimationInfo("Walk", newAnimation));
+        // jump
+        ArrayList<BufferedImage> jump = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            String filename = "assets/Wolf animations/wolf_jump/tile00" + i + ".png";
+            try {
+                walk.add(ImageIO.read(new File(filename)));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(jump,60);
+        animations.add(new AnimationInfo("Jump", newAnimation));
     }
-
     //This function is changed from the previous version to let the player turn left and right
     //This version of the function, when combined with getWidth() and getHeight()
     //Allow the player to turn without needing separate images for left and right
     public int getxCoord() {
-        if (facingRight) {
-            return (int) xCoord;
-        } else {
-            return (int) (xCoord + (getPlayerImage().getWidth()));
-        }
+        return (int) xCoord;
     }
 
     public int getyCoord() {
         return (int) yCoord;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void faceRight() {
-        facingRight = true;
-    }
-
-    public void faceLeft() {
-        facingRight = false;
     }
 
     public void moveRight() {
@@ -88,20 +94,8 @@ public class Player {
         }
     }
 
-    public void turn() {
-        if (facingRight) {
-            faceLeft();
-        } else {
-            faceRight();
-        }
-    }
-
-    public void collectCoin() {
-        score++;
-    }
-
     public BufferedImage getPlayerImage() {
-        return walk.getActiveFrame();
+        return currentAnimation.getActiveFrame();
     }
 
     //These functions are newly added to let the player turn left and right
@@ -112,11 +106,7 @@ public class Player {
     }
 
     public int getWidth() {
-        if (facingRight) {
-            return getPlayerImage().getWidth();
-        } else {
-            return getPlayerImage().getWidth() * -1;
-        }
+        return getPlayerImage().getWidth();
     }
 
     // we use a "bounding Rectangle" for detecting collision
