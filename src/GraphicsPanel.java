@@ -13,6 +13,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private boolean[] pressedKeys;
 
     public GraphicsPanel() {
+
+        //https://stackoverflow.com/questions/15940328/jpanel-animated-background
 //        try {
 //            background = ImageIO.read(new File("src/background.png"));
 //        } catch (IOException e) {
