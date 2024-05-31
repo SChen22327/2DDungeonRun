@@ -13,6 +13,9 @@ public class Animation implements ActionListener {
         this.frames = frames;
         currentFrame = 0;
         timer = new Timer(delay, this);
+    }
+
+    public void play() {
         timer.start();
     }
 

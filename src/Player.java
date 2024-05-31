@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player {
-    private final double MOVE_AMT = 0.6;
+    private final double MOVE_AMT = 0.04;
     private double xCoord;
     private double yCoord;
     private ArrayList<AnimationInfo> animations;
     private Animation currentAnimation;
     public Player() {
+        xCoord = 15;
+        yCoord = 15;
         animations = new ArrayList<AnimationInfo>();
         createAnimations();
     }

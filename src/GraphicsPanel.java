@@ -13,13 +13,13 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private boolean[] pressedKeys;
 
     public GraphicsPanel() {
-
+        //https://www.youtube.com/@RyiSnow
         //https://stackoverflow.com/questions/15940328/jpanel-animated-background
-//        try {
-//            background = ImageIO.read(new File("src/background.png"));
-//        } catch (IOException e) {
-//            System.out.println(e.getMessage());
-//        }
+        try {
+            background = ImageIO.read(new File("assets/Maps/Beginning.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         player = new Player();
         pressedKeys = new boolean[128];
         addKeyListener(this);
@@ -32,23 +32,26 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public void paintComponent(Graphics g) {
         super.paintComponent(g);  // just do this
         g.drawImage(background, 0, 0, null);  // the order that things get "painted" matter; we put background down first
-
+        g.drawImage(player.getPlayerImage(), player.getxCoord(), player.getyCoord(),null);
 
         // player moves left (A)
         if (pressedKeys[65]) {
-
+            player.moveLeft();
         }
 
         // player moves right (D)
         if (pressedKeys[68]) {
+            player.moveRight();
         }
 
         // player moves up (W)
         if (pressedKeys[87]) {
+            player.moveUp();
         }
 
         // player moves down (S)
         if (pressedKeys[83]) {
+            player.moveDown();
         }
     }
 
