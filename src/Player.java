@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player {
-    private final double MOVE_AMT = 0.04;
+    private final double MOVE_AMT = 0.08;
     private double xCoord;
     private double yCoord;
+    private String state;
     private ArrayList<AnimationInfo> animations;
     private Animation currentAnimation;
     public Player() {
+        state = "idle";
         xCoord = 15;
         yCoord = 15;
         animations = new ArrayList<AnimationInfo>();
@@ -31,8 +33,8 @@ public class Player {
                 System.out.println(e.getMessage());
             }
         }
-        newAnimation = new Animation(idle, 60);
-        animations.add(new AnimationInfo("Idle", newAnimation));
+        newAnimation = new Animation(idle, 20);
+        animations.add(new AnimationInfo("idle", newAnimation));
         currentAnimation = newAnimation;
         // walk
         ArrayList<BufferedImage> walk = new ArrayList<>();
@@ -45,25 +47,17 @@ public class Player {
                 System.out.println(e.getMessage());
             }
         }
-        newAnimation = new Animation(walk,60);
-        animations.add(new AnimationInfo("Walk", newAnimation));
-        // jump
-        ArrayList<BufferedImage> jump = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            String filename = "assets/Wolf animations/wolf_jump/tile00" + i + ".png";
-            try {
-                walk.add(ImageIO.read(new File(filename)));
-            }
-            catch (IOException e) {
-                System.out.println(e.getMessage());
+        newAnimation = new Animation(walk,20);
+        animations.add(new AnimationInfo("walk", newAnimation));
+    }
+    private Animation getAnimation(String name) {
+        for (AnimationInfo a : animations) {
+            if (a.getName().equals(name)) {
+                return a.getAnimation();
             }
         }
-        newAnimation = new Animation(jump,60);
-        animations.add(new AnimationInfo("Jump", newAnimation));
+        return currentAnimation;
     }
-    //This function is changed from the previous version to let the player turn left and right
-    //This version of the function, when combined with getWidth() and getHeight()
-    //Allow the player to turn without needing separate images for left and right
     public int getxCoord() {
         return (int) xCoord;
     }
@@ -71,7 +65,22 @@ public class Player {
     public int getyCoord() {
         return (int) yCoord;
     }
-
+    public void checkState() {
+        if (state.equals("idle")) {
+            currentAnimation = getAnimation("idle");
+            currentAnimation.play();
+        }
+        if (state.equals("left") || state.equals("right") || state.equals("up") || state.equals("down")) {
+            currentAnimation = getAnimation("walk");
+            currentAnimation.play();
+        }
+    }
+    public void sendState(String s) {
+        state = s;
+    }
+    public String getState() {
+        return state;
+    }
     public void moveRight() {
         if (xCoord + MOVE_AMT <= 920) {
             xCoord += MOVE_AMT;
@@ -99,10 +108,6 @@ public class Player {
     public BufferedImage getPlayerImage() {
         return currentAnimation.getActiveFrame();
     }
-
-    //These functions are newly added to let the player turn left and right
-    //These functions when combined with the updated getxCoord()
-    //Allow the player to turn without needing separate images for left and right
     public int getHeight() {
         return getPlayerImage().getHeight();
     }

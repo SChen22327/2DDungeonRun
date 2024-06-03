@@ -23,6 +23,9 @@ public class Door {
         staticIMG = open.getActiveFrame();
     }
 
+    public void open() {
+
+    }
     public Rectangle doorRect() {
         int imageHeight = open.getActiveFrame().getHeight();
         int imageWidth = open.getActiveFrame().getWidth();
