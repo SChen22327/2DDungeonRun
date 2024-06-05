@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 public class MainPanel implements Runnable {
 
@@ -8,12 +9,13 @@ public class MainPanel implements Runnable {
         JFrame frame = new JFrame("Dungeon Run");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(544, 448 + 40); // 540 height of image + 40 for window menu bar
+        frame.setSize(768, 576 + 40); // 540 height of image + 40 for window menu bar
         frame.setLocationRelativeTo(null); // auto-centers frame in screen
 
         // create and add panel
         panel = new GraphicsPanel();
         frame.add(panel);
+        frame.getContentPane().setBackground(new Color(24,19,37));
 
         // display the frame
         frame.setVisible(true);

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player {
-    private final double MOVE_AMT = 0.08;
+    private final double MOVE_AMT = .4;
     private double xCoord;
     private double yCoord;
     private String state;
@@ -85,7 +85,7 @@ public class Player {
         return state.substring(0, state.indexOf(";"));
     }
     public void moveRight() {
-        if (xCoord + MOVE_AMT <= 920) {
+        if (xCoord + MOVE_AMT <= 715) {
             xCoord += MOVE_AMT;
         }
     }
@@ -103,7 +103,7 @@ public class Player {
     }
 
     public void moveDown() {
-        if (yCoord + MOVE_AMT <= 435) {
+        if (yCoord + MOVE_AMT <= 536) {
             yCoord += MOVE_AMT;
         }
     }

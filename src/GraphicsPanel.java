@@ -32,8 +32,12 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);  // just do this
-        g.drawImage(background, 0, 0, null);  // the order that things get "painted" matter; we put background down first
+        super.paintComponent(g);
+        int maxX = background.getWidth();
+        int maxY = background.getHeight();
+
+        g.drawImage(background, 0, 0, null);
+
         if (player.getDir().equals("left")) {
             g.drawImage(player.getPlayerImage(), player.getxCoord() + player.getWidth() * 2, player.getyCoord(), -player.getWidth(), player.getHeight(), null);
         } else {
@@ -70,7 +74,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     }
 
     public void checkLevel() {
+        if (true) {
 
+        }
     }
 
     // ----- KeyListener interface methods -----
