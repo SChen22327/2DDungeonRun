@@ -13,7 +13,7 @@ public class Player {
     private ArrayList<AnimationInfo> animations;
     private Animation currentAnimation;
     public Player() {
-        state = "idle";
+        state = "right;idle";
         xCoord = 15;
         yCoord = 15;
         animations = new ArrayList<AnimationInfo>();
@@ -66,11 +66,11 @@ public class Player {
         return (int) yCoord;
     }
     public void checkState() {
-        if (state.equals("idle")) {
+        if (getState().equals("idle")) {
             currentAnimation = getAnimation("idle");
             currentAnimation.play();
         }
-        if (state.equals("left") || state.equals("right") || state.equals("up") || state.equals("down")) {
+        if (getState().equals("walk")) {
             currentAnimation = getAnimation("walk");
             currentAnimation.play();
         }
@@ -79,7 +79,10 @@ public class Player {
         state = s;
     }
     public String getState() {
-        return state;
+        return state.substring(state.indexOf(";") + 1);
+    }
+    public String getDir() {
+        return state.substring(0, state.indexOf(";"));
     }
     public void moveRight() {
         if (xCoord + MOVE_AMT <= 920) {

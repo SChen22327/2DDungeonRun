@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Door {
-    private double xCoord;
-    private double yCoord;
+public class Door extends Entity {
     private BufferedImage staticIMG;
     private Animation open;
     public Door() {
@@ -29,7 +27,7 @@ public class Door {
     public Rectangle doorRect() {
         int imageHeight = open.getActiveFrame().getHeight();
         int imageWidth = open.getActiveFrame().getWidth();
-        Rectangle rect = new Rectangle((int) xCoord, (int) yCoord, imageWidth, imageHeight);
+        Rectangle rect = new Rectangle((int) getxCoord(), (int) getyCoord(), imageWidth, imageHeight);
         return rect;
     }
 }

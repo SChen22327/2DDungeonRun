@@ -8,15 +8,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class GraphicsPanel extends JPanel implements KeyListener, MouseListener, ActionListener {
+    private int map;
     private BufferedImage background;
     private Player player;
     private boolean[] pressedKeys;
 
     public GraphicsPanel() {
+        map = 0;
         //https://www.youtube.com/@RyiSnow
         //https://stackoverflow.com/questions/15940328/jpanel-animated-background
         try {
-            background = ImageIO.read(new File("assets/Maps/Beginning.png"));
+            background = ImageIO.read(new File("assets/Maps/map000/map.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -32,7 +34,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public void paintComponent(Graphics g) {
         super.paintComponent(g);  // just do this
         g.drawImage(background, 0, 0, null);  // the order that things get "painted" matter; we put background down first
-        if (player.getState().equals("left")) {
+        if (player.getDir().equals("left")) {
             g.drawImage(player.getPlayerImage(), player.getxCoord() + player.getWidth() * 2, player.getyCoord(), -player.getWidth(), player.getHeight(), null);
         } else {
             g.drawImage(player.getPlayerImage(), player.getxCoord() + player.getWidth(), player.getyCoord(), null);
@@ -40,31 +42,35 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 
         // player moves left (A)
         if (pressedKeys[65]) {
-            player.sendState("left");
+            player.sendState("left;walk");
             player.moveLeft();
         }
 
         // player moves right (D)
         if (pressedKeys[68]) {
-            player.sendState("right");
+            player.sendState("right;walk");
             player.moveRight();
         }
 
         // player moves up (W)
         if (pressedKeys[87]) {
-            player.sendState("up");
+            player.sendState(player.getDir() + ";walk");
             player.moveUp();
         }
 
         // player moves down (S)
         if (pressedKeys[83]) {
-            player.sendState("down");
+            player.sendState(player.getDir() + ";walk");
             player.moveDown();
         }
         if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83])) {
-            player.sendState("idle");
+            player.sendState(player.getDir() + ";idle");
         }
         player.checkState();
+    }
+
+    public void checkLevel() {
+
     }
 
     // ----- KeyListener interface methods -----
