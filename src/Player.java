@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player {
-    private final double MOVE_AMT = .4;
+    private final double MOVE_AMT = .2;
     private double xCoord;
     private double yCoord;
     private String state;
@@ -14,8 +14,8 @@ public class Player {
     private Animation currentAnimation;
     public Player() {
         state = "right;idle";
-        xCoord = 15;
-        yCoord = 15;
+        xCoord = 96;
+        yCoord = 96;
         animations = new ArrayList<AnimationInfo>();
         createAnimations();
     }
@@ -91,13 +91,13 @@ public class Player {
     }
 
     public void moveLeft() {
-        if (xCoord - MOVE_AMT >= 0) {
+        if (xCoord - MOVE_AMT >= 32) {
             xCoord -= MOVE_AMT;
         }
     }
 
     public void moveUp() {
-        if (yCoord - MOVE_AMT >= 0) {
+        if (yCoord - MOVE_AMT >= 24) {
             yCoord -= MOVE_AMT;
         }
     }

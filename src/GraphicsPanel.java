@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class GraphicsPanel extends JPanel implements KeyListener, MouseListener, ActionListener {
     private int map;
+    private int maxX;
     private BufferedImage background;
     private Player player;
     private boolean[] pressedKeys;
@@ -41,7 +42,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         if (player.getDir().equals("left")) {
             g.drawImage(player.getPlayerImage(), player.getxCoord() + player.getWidth() * 2, player.getyCoord(), -player.getWidth(), player.getHeight(), null);
         } else {
-            g.drawImage(player.getPlayerImage(), player.getxCoord() + player.getWidth(), player.getyCoord(), null);
+            g.drawImage(player.getPlayerImage(), player.getxCoord(), player.getyCoord(), null);
         }
 
         // player moves left (A)
