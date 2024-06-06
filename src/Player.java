@@ -123,7 +123,9 @@ public class Player {
     public Rectangle playerRect() {
         int imageHeight = getPlayerImage().getHeight();
         int imageWidth = getPlayerImage().getWidth();
-        Rectangle rect = new Rectangle((int) xCoord, (int) yCoord, imageWidth, imageHeight);
+        int addX = (imageWidth - 17) / 2;
+        int addY = (imageHeight - 26);
+        Rectangle rect = new Rectangle((int) xCoord + addX, (int) yCoord + addY, 17, 26);
         return rect;
     }
 }

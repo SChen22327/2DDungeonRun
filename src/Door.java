@@ -21,9 +21,11 @@ public class Door extends Entity {
         staticIMG = open.getActiveFrame();
     }
 
-    public void open() {
+    @Override
+    public void reaction() {
 
     }
+
     public Rectangle doorRect() {
         int imageHeight = open.getActiveFrame().getHeight();
         int imageWidth = open.getActiveFrame().getWidth();

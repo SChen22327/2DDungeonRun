@@ -10,4 +10,8 @@ public class Entity {
     public double getyCoord() {
         return yCoord;
     }
+
+    public void reaction() {
+
+    }
 }
