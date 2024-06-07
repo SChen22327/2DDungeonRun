@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class GraphicsPanel extends JPanel implements KeyListener, MouseListener, ActionListener {
+    private ArrayList<BufferedImage> maps;
     private int map;
     private int maxX;
     private BufferedImage background;
@@ -15,14 +16,17 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private boolean[] pressedKeys;
 
     public GraphicsPanel() {
+        maps = new ArrayList<>();
+        for (int i = 0; i < new File("assets/Maps").listFiles().length; i++) {
+            try {
+                maps.add(ImageIO.read(new File("assets/Maps/map00" + i + "/map.png")));
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
         map = 0;
         //https://www.youtube.com/@RyiSnow
         //https://stackoverflow.com/questions/15940328/jpanel-animated-background
-        try {
-            background = ImageIO.read(new File("assets/Maps/map000/map.png"));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
         player = new Player();
         pressedKeys = new boolean[128];
         addKeyListener(this);
