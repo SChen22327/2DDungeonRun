@@ -8,18 +8,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class GraphicsPanel extends JPanel implements KeyListener, MouseListener, ActionListener {
-    private ArrayList<BufferedImage> maps;
+    private ArrayList<Map> maps;
     private int map;
-    private int maxX;
+    private BufferedImage walkable;
     private BufferedImage background;
     private Player player;
     private boolean[] pressedKeys;
 
     public GraphicsPanel() {
         maps = new ArrayList<>();
-        for (int i = 0; i < new File("assets/Maps").listFiles().length; i++) {
+        for (int i = 0; i < new File("assets/Maps").list().length; i++) {
             try {
-                maps.add(ImageIO.read(new File("assets/Maps/map00" + i + "/map.png")));
+                maps.add(new Map(ImageIO.read(new File("assets/Maps/map00" + i + "/map.png")), ImageIO.read(new File("assets/Maps/map00" + i + "/walkable.png"))));
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
@@ -27,7 +27,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         map = 0;
         //https://www.youtube.com/@RyiSnow
         //https://stackoverflow.com/questions/15940328/jpanel-animated-background
+        background = maps.get(map).getBG();
+        walkable = maps.get(map).getWalkable();
         player = new Player();
+        player.newMap(walkable);
         pressedKeys = new boolean[128];
         addKeyListener(this);
         addMouseListener(this);
@@ -38,15 +41,14 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int maxX = background.getWidth();
-        int maxY = background.getHeight();
-
-        g.drawImage(background, 0, 0, null);
+        checkLevel();
+        g.drawImage(walkable,  - player.getxCoord() + 384,  - player.getyCoord() + 275, null);
+        g.drawImage(background,  - player.getxCoord() + (384 + player.getWidth() / 2) - 64,  - player.getyCoord() + (288 - player.getHeight() / 2) - 16, null);
 
         if (player.getDir().equals("left")) {
-            g.drawImage(player.getPlayerImage(), player.getxCoord() + player.getWidth() * 2, player.getyCoord(), -player.getWidth(), player.getHeight(), null);
+            g.drawImage(player.getPlayerImage(), 384 + player.getWidth(), 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
         } else {
-            g.drawImage(player.getPlayerImage(), player.getxCoord(), player.getyCoord(), null);
+            g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, null);
         }
 
         // player moves left (A)
@@ -79,9 +81,12 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     }
 
     public void checkLevel() {
-        if (true) {
-
-        }
+//        if (true) {
+//            map++;
+//            player.reset();
+//        }
+        background = maps.get(map).getBG();
+        walkable = maps.get(map).getWalkable();
     }
 
     // ----- KeyListener interface methods -----
