@@ -94,33 +94,69 @@ public class Player {
         return state.substring(0, state.indexOf(";"));
     }
     public void reset() {
-        xCoord = 0;
-        yCoord = 0;
+        xCoord = 96;
+        yCoord = 96;
     }
     public void moveRight() {
-        if (xCoord + MOVE_AMT <= walkable.getWidth()) {
+        if (canMove(1)) {
             xCoord += MOVE_AMT;
         }
     }
 
     public void moveLeft() {
-        if (xCoord - MOVE_AMT >= 0) {
+        if (canMove(2)) {
             xCoord -= MOVE_AMT;
         }
     }
 
     public void moveUp() {
-        if (yCoord - MOVE_AMT >= 0) {
+        if (canMove(3)) {
             yCoord -= MOVE_AMT;
         }
     }
 
     public void moveDown() {
-        if (yCoord + MOVE_AMT <= walkable.getHeight()) {
+        if (canMove(4)) {
             yCoord += MOVE_AMT;
         }
     }
 
+    public boolean canMove(int n) {
+        Rectangle rect = playerRect();
+        switch (n) {
+            //right
+            case 1:
+                for (int i = rect.y; i <= rect.getMaxY(); i++) {
+                    System.out.println(walkable.getRGB(i, (int) rect.getMaxX() + 1));
+                    if (walkable.getRGB(i, (int) rect.getMaxX() + 1) != new Color(24,19,37).getRGB()) {
+                        return false;
+                    }
+                }
+            //left
+            case 2:
+                for (int i = rect.y; i <= rect.getMaxY(); i++) {
+                    if (walkable.getRGB(i, rect.x - 1) != new Color(24,19,37).getRGB()) {
+                        return false;
+                    }
+                }
+            //up
+            case 3:
+                for (int i = rect.x; i <= rect.getMaxX(); i++) {
+                    if (walkable.getRGB(i, rect.y - 1) != new Color(24,19,37).getRGB()) {
+                        return false;
+                    }
+                }
+            //down
+            case 4:
+                for (int i = rect.x; i <= rect.getMaxX(); i++) {
+                    if (walkable.getRGB(i, (int) rect.getMaxY() + 1) != new Color(24,19,37).getRGB()) {
+                        return false;
+                    }
+                }
+            default:
+                return true;
+        }
+    }
     public BufferedImage getPlayerImage() {
         return currentAnimation.getActiveFrame();
     }

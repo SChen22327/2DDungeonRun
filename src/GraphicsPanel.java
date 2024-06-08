@@ -14,6 +14,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private BufferedImage background;
     private Player player;
     private boolean[] pressedKeys;
+    private final int MAXCOL = 16;
+    private final int MAXROW = 12;
+    private final int TILESIZE = 48;
 
     public GraphicsPanel() {
         maps = new ArrayList<>();
@@ -42,14 +45,16 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         checkLevel();
-        g.drawImage(walkable,  - player.getxCoord() + 384,  - player.getyCoord() + 275, null);
-        g.drawImage(background,  - player.getxCoord() + (384 + player.getWidth() / 2) - 64,  - player.getyCoord() + (288 - player.getHeight() / 2) - 16, null);
+
+        g.drawImage(walkable,  -player.getxCoord() + 322, -player.getyCoord() + 240, null);
+        g.drawImage(background,  -player.getxCoord() + 322, -player.getyCoord() + 240, null);
 
         if (player.getDir().equals("left")) {
-            g.drawImage(player.getPlayerImage(), 384 + player.getWidth(), 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
+            g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
         } else {
-            g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, null);
+            g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
         }
+
 
         // player moves left (A)
         if (pressedKeys[65]) {
