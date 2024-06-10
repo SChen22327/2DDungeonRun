@@ -6,17 +6,15 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class GraphicsPanel extends JPanel implements KeyListener, MouseListener, ActionListener {
     private ArrayList<Map> maps;
     private int map;
-    private BufferedImage walkable;
+    private ArrayList<ArrayList<Tile>> walkable;
     private BufferedImage background;
     private Player player;
     private boolean[] pressedKeys;
-    private final int MAXCOL = 16;
-    private final int MAXROW = 12;
-    private final int TILESIZE = 48;
 
     public GraphicsPanel() {
         maps = new ArrayList<>();
@@ -31,8 +29,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         //https://www.youtube.com/@RyiSnow
         //https://stackoverflow.com/questions/15940328/jpanel-animated-background
         background = maps.get(map).getBG();
-        walkable = maps.get(map).getWalkable();
         player = new Player();
+        loadMap();
         player.newMap(walkable);
         pressedKeys = new boolean[128];
         addKeyListener(this);
@@ -46,15 +44,23 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         super.paintComponent(g);
         checkLevel();
 
-        g.drawImage(walkable,  -player.getxCoord() + 322, -player.getyCoord() + 240, null);
-        g.drawImage(background,  -player.getxCoord() + 322, -player.getyCoord() + 240, null);
+        g.drawImage(background,  -player.getxCoord() + 384, -player.getyCoord() + 288, null);
 
         if (player.getDir().equals("left")) {
             g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
         } else {
             g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
         }
+//        g.drawImage(background,  0, 0, null);
+//
+//        if (player.getDir().equals("left")) {
+//            g.drawImage(player.getPlayerImage(), player.getxCoord() + player.getWidth() / 2, player.getyCoord() - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
+//        } else {
+//            g.drawImage(player.getPlayerImage(), player.getxCoord() - player.getWidth() / 2, player.getyCoord() - player.getHeight() / 2, null);
+//        }
 
+        Graphics2D g2 = (Graphics2D) g;
+        g2.draw(player.playerRect());
 
         // player moves left (A)
         if (pressedKeys[65]) {
@@ -85,13 +91,41 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         player.checkState();
     }
 
+    public void loadMap() {
+        ArrayList<String> ints = new ArrayList<>();
+        try {
+            Scanner s = new Scanner(new File("assets/Maps/map000/walkable.txt"));
+            while (s.hasNextLine()) {
+                ints.add(s.nextLine());
+            }
+            s.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        walkable = new ArrayList<ArrayList<Tile>>();
+        double r = 0;
+        double c = 0;
+        for (int i = 0; i < ints.size(); i++) {
+            walkable.add(new ArrayList<>());
+            for (int j = 0; j < ints.get(i).length(); j++) {
+                if (ints.get(i).charAt(j) != ' ') {
+                    int z = Integer.parseInt(ints.get(i).charAt(j) + "");
+                    walkable.get(i).add(new Tile(r, c, z));
+                    c += 48;
+                }
+            }
+            r += 48;
+            if ((r/48)-1 == ints.size()/2+1) {
+                r = 0;
+            }
+        }
+    }
     public void checkLevel() {
 //        if (true) {
 //            map++;
 //            player.reset();
 //        }
         background = maps.get(map).getBG();
-        walkable = maps.get(map).getWalkable();
     }
 
     // ----- KeyListener interface methods -----

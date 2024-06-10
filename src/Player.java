@@ -7,9 +7,10 @@ import java.util.ArrayList;
 
 public class Player {
     private final double MOVE_AMT = .2;
+    private int[] currentTile;
     private double xCoord;
     private double yCoord;
-    private BufferedImage walkable;
+    private ArrayList<ArrayList<Tile>> walkable;
     private BufferedImage staticIMG;
     private String state;
     private ArrayList<AnimationInfo> animations;
@@ -64,8 +65,8 @@ public class Player {
         }
         return currentAnimation;
     }
-    public void newMap(BufferedImage img) {
-        walkable = img;
+    public void newMap(ArrayList<ArrayList<Tile>> t) {
+        walkable = t;
     }
     public int getxCoord() {
         return (int) xCoord;
@@ -83,6 +84,7 @@ public class Player {
             currentAnimation = getAnimation("walk");
             currentAnimation.play();
         }
+        currentTile = new int[]{(int) xCoord / 48, (int) yCoord / 48};
     }
     public void sendState(String s) {
         state = s;
@@ -94,6 +96,7 @@ public class Player {
         return state.substring(0, state.indexOf(";"));
     }
     public void reset() {
+        currentTile = new int[]{2,2};
         xCoord = 96;
         yCoord = 96;
     }
@@ -121,60 +124,42 @@ public class Player {
         }
     }
 
-    public boolean canMove(int n) {
-        Rectangle rect = playerRect();
-        switch (n) {
+    private boolean canMove(int i) {
+        switch (i) {
             //right
             case 1:
-                for (int i = rect.y; i <= rect.getMaxY(); i++) {
-                    System.out.println(walkable.getRGB(i, (int) rect.getMaxX() + 1));
-                    if (walkable.getRGB(i, (int) rect.getMaxX() + 1) != new Color(24,19,37).getRGB()) {
-                        return false;
-                    }
-                }
+                return !walkable.get(currentTile[1]).get(currentTile[0] + 1).collided(playerRect(), 1);
             //left
             case 2:
-                for (int i = rect.y; i <= rect.getMaxY(); i++) {
-                    if (walkable.getRGB(i, rect.x - 1) != new Color(24,19,37).getRGB()) {
-                        return false;
-                    }
-                }
+                return !walkable.get(currentTile[1]).get(currentTile[0] - 1).collided(playerRect(), 2);
             //up
             case 3:
-                for (int i = rect.x; i <= rect.getMaxX(); i++) {
-                    if (walkable.getRGB(i, rect.y - 1) != new Color(24,19,37).getRGB()) {
-                        return false;
-                    }
-                }
+                return !walkable.get(currentTile[1] - 1).get(currentTile[0]).collided(playerRect(), 3);
             //down
             case 4:
-                for (int i = rect.x; i <= rect.getMaxX(); i++) {
-                    if (walkable.getRGB(i, (int) rect.getMaxY() + 1) != new Color(24,19,37).getRGB()) {
-                        return false;
-                    }
-                }
+                return !walkable.get(currentTile[1] + 1).get(currentTile[0]).collided(playerRect(), 4);
             default:
-                return true;
+                return false;
         }
     }
     public BufferedImage getPlayerImage() {
         return currentAnimation.getActiveFrame();
     }
     public int getHeight() {
-        return staticIMG.getHeight();
+        return currentAnimation.getActiveFrame().getHeight();
     }
 
     public int getWidth() {
-        return staticIMG.getWidth();
+        return currentAnimation.getActiveFrame().getWidth();
     }
 
     // we use a "bounding Rectangle" for detecting collision
     public Rectangle playerRect() {
-        int imageHeight = staticIMG.getHeight();
-        int imageWidth = staticIMG.getWidth();
-        int addX = (imageWidth - 17) / 2;
+        int imageHeight = getHeight();
+        int imageWidth = getWidth();
+        int addX = (imageWidth - 13) / 2;
         int addY = (imageHeight - 26);
-        Rectangle rect = new Rectangle((int) xCoord + addX, (int) yCoord + addY, 17, 26);
+        Rectangle rect = new Rectangle((int) xCoord + addX - imageWidth/2, (int) yCoord + addY - imageHeight/2, 17, 26);
         return rect;
     }
 }
