@@ -110,6 +110,7 @@ public class Player {
         walkable = t;
     }
 
+    public void attack
     public void takeDMG() {
         health -= 1;
         if (health == 0) {

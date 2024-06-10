@@ -31,7 +31,7 @@ public class Enemy extends Entity {
         // walk
         ArrayList<BufferedImage> walk = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-            String filename = "assets/Dino/0/walk/" + i + ".png";
+            String filename = "assets/Dino/0/walk/tile00" + i + ".png";
             try {
                 walk.add(ImageIO.read(new File(filename)));
             }
@@ -41,5 +41,44 @@ public class Enemy extends Entity {
         }
         newAnimation = new Animation(walk,20);
         animations.add(new AnimationInfo("walk", newAnimation));
+        //attack
+        ArrayList<BufferedImage> attack = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            String filename = "assets/Dino/0/kick/tile00" + i + ".png";
+            try {
+                attack.add(ImageIO.read(new File(filename)));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(attack,20);
+        animations.add(new AnimationInfo("attack", newAnimation));
+        //hurt
+        ArrayList<BufferedImage> hurt = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            String filename = "assets/Dino/0/hurt/tile00" + i + ".png";
+            try {
+                hurt.add(ImageIO.read(new File(filename)));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(hurt,20);
+        animations.add(new AnimationInfo("hurt", newAnimation));
+        //death
+        ArrayList<BufferedImage> death = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            String filename = "assets/Dino/0/hurt/tile00" + i + ".png";
+            try {
+                death.add(ImageIO.read(new File(filename)));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(death,20);
+        animations.add(new AnimationInfo("death", newAnimation));
     }
 }

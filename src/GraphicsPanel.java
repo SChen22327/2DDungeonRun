@@ -89,33 +89,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 
     public void loadMap() {
         background = maps.get(map).getBG();
-        ArrayList<String> ints = new ArrayList<>();
-        try {
-            Scanner s = new Scanner(new File("assets/Maps/map00" + map + "/walkable.txt"));
-            while (s.hasNextLine()) {
-                ints.add(s.nextLine());
-            }
-            s.close();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        walkable = new ArrayList<ArrayList<Tile>>();
-        double r = 0;
-        double c = 0;
-        for (int i = 0; i < ints.size(); i++) {
-            walkable.add(new ArrayList<>());
-            for (int j = 0; j < ints.get(i).length(); j++) {
-                if (ints.get(i).charAt(j) != ' ') {
-                    int z = Integer.parseInt(ints.get(i).charAt(j) + "");
-                    walkable.get(i).add(new Tile(r, c, z));
-                    c += 48;
-                }
-            }
-            r += 48;
-            if ((r/48)-1 == ints.size()/2+1) {
-                r = 0;
-            }
-        }
+        walkable = maps.get(map).loadMap();
     }
     public void checkLevel() {
 //        if (true) {
