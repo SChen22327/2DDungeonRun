@@ -15,7 +15,7 @@ public class MainPanel implements Runnable {
         // create and add panel
         panel = new GraphicsPanel();
         frame.add(panel);
-        frame.getContentPane().setBackground(new Color(24,19,37));
+        panel.setBackground(new Color(24,19,37));
 
         // display the frame
         frame.setVisible(true);

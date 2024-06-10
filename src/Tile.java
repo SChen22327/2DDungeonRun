@@ -19,23 +19,23 @@ public class Tile {
         }
     }
     // if false, player has NOT collided
-    WHY WONT YOU WORK
     public boolean collided(Rectangle rect, int i) {
-        Rectangle r = rect;
-        switch (i) {
-            case 1:
-                r.x++;
-            case 2:
-                r.x--;
-            case 3:
-                r.y--;
-            case 4:
-                r.y++;
-        }
-        if (tileRect() == null) {
-            return false;
-        }
-        return tileRect().intersects(rect);
+//        Rectangle r = rect;
+//        switch (i) {
+//            case 1:
+//                r.x++;
+//            case 2:
+//                r.x--;
+//            case 3:
+//                r.y--;
+//            case 4:
+//                r.y++;
+//        }
+//        if (tileRect() == null) {
+//            return false;
+//        }
+//        return tileRect().intersects(rect);
+        return collision;
     }
     public Rectangle tileRect() {
         if (collision) {

@@ -7,20 +7,22 @@ import java.util.ArrayList;
 
 public class Player {
     private final double MOVE_AMT = .2;
+    private int health;
     private int[] currentTile;
     private double xCoord;
     private double yCoord;
     private ArrayList<ArrayList<Tile>> walkable;
-    private BufferedImage staticIMG;
     private String state;
     private ArrayList<AnimationInfo> animations;
     private Animation currentAnimation;
+    private BufferedImage staticIMG;
     public Player() {
         try {
             staticIMG = ImageIO.read(new File("assets/Wolf animations/wolf_Static.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+        health = 3;
         state = "right;idle";
         reset();
         createAnimations();
@@ -56,6 +58,45 @@ public class Player {
         }
         newAnimation = new Animation(walk,20);
         animations.add(new AnimationInfo("walk", newAnimation));
+        //attack
+        ArrayList<BufferedImage> attack = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            String filename = "assets/Wolf animations/wolf_attack/tile00" + i + ".png";
+            try {
+                attack.add(ImageIO.read(new File(filename)));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(attack,20);
+        animations.add(new AnimationInfo("attack", newAnimation));
+        //hurt
+        ArrayList<BufferedImage> hurt = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            String filename = "assets/Wolf animations/wolf_damage/tile00" + i + ".png";
+            try {
+                hurt.add(ImageIO.read(new File(filename)));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(hurt, 20);
+        animations.add(new AnimationInfo("hurt", newAnimation));
+        //death
+        ArrayList<BufferedImage> death = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            String filename = "assets/Wolf animations/wolf_death/tile00" + i + ".png";
+            try {
+                death.add(ImageIO.read(new File(filename)));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(death, 20);
+        animations.add(new AnimationInfo("death", newAnimation));
     }
     private Animation getAnimation(String name) {
         for (AnimationInfo a : animations) {
@@ -67,6 +108,13 @@ public class Player {
     }
     public void newMap(ArrayList<ArrayList<Tile>> t) {
         walkable = t;
+    }
+
+    public void takeDMG() {
+        health -= 1;
+        if (health == 0) {
+            sendState(getDir() + ";death");
+        }
     }
     public int getxCoord() {
         return (int) xCoord;
@@ -82,6 +130,18 @@ public class Player {
         }
         if (getState().equals("walk")) {
             currentAnimation = getAnimation("walk");
+            currentAnimation.play();
+        }
+        if (getState().equals("attack")) {
+            currentAnimation = getAnimation("attack");
+            currentAnimation.play();
+        }
+        if (getState().equals("hurt")) {
+            currentAnimation = getAnimation("hurt");
+            currentAnimation.play();
+        }
+        if (getState().equals("death")) {
+            currentAnimation = getAnimation("death");
             currentAnimation.play();
         }
         currentTile = new int[]{(int) xCoord / 48, (int) yCoord / 48};
@@ -101,26 +161,34 @@ public class Player {
         yCoord = 96;
     }
     public void moveRight() {
-        if (canMove(1)) {
+        if (xCoord < (walkable.get(0).size() - 1) * 48 && canMove(1)) {
             xCoord += MOVE_AMT;
+        } else {
+            xCoord--;
         }
     }
 
     public void moveLeft() {
-        if (canMove(2)) {
+        if (xCoord > 48 && canMove(2)) {
             xCoord -= MOVE_AMT;
+        } else {
+            xCoord++;
         }
     }
 
     public void moveUp() {
-        if (canMove(3)) {
+        if (yCoord > 48 && canMove(3)) {
             yCoord -= MOVE_AMT;
+        } else {
+            yCoord++;
         }
     }
 
     public void moveDown() {
-        if (canMove(4)) {
+        if (yCoord < (walkable.size() - 1) * 48 && canMove(4)) {
             yCoord += MOVE_AMT;
+        } else {
+            yCoord--;
         }
     }
 
@@ -138,9 +206,8 @@ public class Player {
             //down
             case 4:
                 return !walkable.get(currentTile[1] + 1).get(currentTile[0]).collided(playerRect(), 4);
-            default:
-                return false;
         }
+        return false;
     }
     public BufferedImage getPlayerImage() {
         return currentAnimation.getActiveFrame();
@@ -157,7 +224,7 @@ public class Player {
     public Rectangle playerRect() {
         int imageHeight = getHeight();
         int imageWidth = getWidth();
-        int addX = (imageWidth - 13) / 2;
+        int addX = (imageWidth - 13) / 4;
         int addY = (imageHeight - 26);
         Rectangle rect = new Rectangle((int) xCoord + addX - imageWidth/2, (int) yCoord + addY - imageHeight/2, 17, 26);
         return rect;

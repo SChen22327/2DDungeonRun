@@ -20,7 +20,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         maps = new ArrayList<>();
         for (int i = 0; i < new File("assets/Maps").list().length; i++) {
             try {
-                maps.add(new Map(ImageIO.read(new File("assets/Maps/map00" + i + "/map.png")), ImageIO.read(new File("assets/Maps/map00" + i + "/walkable.png"))));
+                maps.add(new Map(ImageIO.read(new File("assets/Maps/map00" + i + "/map.png")), new File("assets/Maps/map00" + i + "/walkable.txt")));
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
@@ -28,7 +28,6 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         map = 0;
         //https://www.youtube.com/@RyiSnow
         //https://stackoverflow.com/questions/15940328/jpanel-animated-background
-        background = maps.get(map).getBG();
         player = new Player();
         loadMap();
         player.newMap(walkable);
@@ -42,7 +41,6 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        checkLevel();
 
         g.drawImage(background,  -player.getxCoord() + 384, -player.getyCoord() + 288, null);
 
@@ -59,8 +57,6 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 //            g.drawImage(player.getPlayerImage(), player.getxCoord() - player.getWidth() / 2, player.getyCoord() - player.getHeight() / 2, null);
 //        }
 
-        Graphics2D g2 = (Graphics2D) g;
-        g2.draw(player.playerRect());
 
         // player moves left (A)
         if (pressedKeys[65]) {
@@ -92,9 +88,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     }
 
     public void loadMap() {
+        background = maps.get(map).getBG();
         ArrayList<String> ints = new ArrayList<>();
         try {
-            Scanner s = new Scanner(new File("assets/Maps/map000/walkable.txt"));
+            Scanner s = new Scanner(new File("assets/Maps/map00" + map + "/walkable.txt"));
             while (s.hasNextLine()) {
                 ints.add(s.nextLine());
             }
@@ -125,7 +122,6 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 //            map++;
 //            player.reset();
 //        }
-        background = maps.get(map).getBG();
     }
 
     // ----- KeyListener interface methods -----
