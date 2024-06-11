@@ -1,4 +1,5 @@
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -6,12 +7,14 @@ import java.util.ArrayList;
 
 public class Enemy extends Entity {
     private ArrayList<AnimationInfo> animations;
+    private int health;
     private Animation currentAnimation;
     public Enemy(double xCoord, double yCoord, BufferedImage img) {
         super(xCoord, yCoord, img);
     }
 
     private void createAnimations() {
+        health = 3;
         animations = new ArrayList<AnimationInfo>();
         Animation newAnimation;
         //idle
@@ -80,5 +83,13 @@ public class Enemy extends Entity {
         }
         newAnimation = new Animation(death,20);
         animations.add(new AnimationInfo("death", newAnimation));
+    }
+    public void takeDMG(int dmg) {
+        health -= dmg;
+    }
+
+    @Override
+    public Rectangle rect() {
+        return new Rectangle((int) getxCoord(),(int) getyCoord(), 24, 24);
     }
 }

@@ -33,23 +33,31 @@ public class Map {
                 System.out.println(e.getMessage());
             }
             tiles = new ArrayList<ArrayList<Tile>>();
-            double r = 0;
-            double c = 0;
+            double x = 0;
+            double y = 0;
             for (int i = 0; i < ints.size(); i++) {
                 tiles.add(new ArrayList<>());
                 for (int j = 0; j < ints.get(i).length(); j++) {
                     if (ints.get(i).charAt(j) != ' ') {
                         int z = Integer.parseInt(ints.get(i).charAt(j) + "");
-                        tiles.get(i).add(new Tile(r, c, z));
-                        c += 48;
+                        if (z != 2) {
+                            tiles.get(i).add(new Tile(x, y, z));
+                        } else {
+                            tiles.get(i).add(new Door(x, y));
+                            y += 48;
+                            tiles.get(i).add(new Tile(x, y, 2));
+                            j += 2;
+                        }
+                        y += 48;
                     }
                 }
-                r += 48;
-                if ((r / 48) - 1 == ints.size() / 2 + 1) {
-                    r = 0;
+                x += 48;
+                if (y / 48 == ints.get(0).length() / 2 + 1) {
+                    y = 0;
                 }
             }
         }
+
         return tiles;
     }
 }

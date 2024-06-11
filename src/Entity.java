@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 public class Entity {
     private double xCoord;
@@ -10,6 +9,9 @@ public class Entity {
         this.xCoord = xCoord;
         this.yCoord = yCoord;
         this.img = img;
+    }
+    public BufferedImage getImg() {
+        return img;
     }
     public double getxCoord() {
         return xCoord;

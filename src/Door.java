@@ -5,16 +5,27 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Door extends Entity {
-    private Animation open;
-    public Door(double xCoord, double yCoord, BufferedImage img) {
-        super(xCoord, yCoord, img);
+public class Door extends Tile {
+    private BufferedImage open;
+    private BufferedImage closed;
+    public Door(double x, double y){
+        super(x, y, 2);
+        try {
+            open = ImageIO.read(new File("assets/Dungeon Gathering/door.png"));
+            closed = ImageIO.read(new File("assets/Dungeon Gathering/closed.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public BufferedImage getImg() {
+        return open;
     }
 
     public Rectangle doorRect() {
-        int imageHeight = open.getActiveFrame().getHeight();
-        int imageWidth = open.getActiveFrame().getWidth();
-        Rectangle rect = new Rectangle((int) getxCoord(), (int) getyCoord(), imageWidth, imageHeight);
+        int imageHeight = open.getHeight();
+        int imageWidth = open.getWidth();
+        Rectangle rect = new Rectangle((int) getxCoord(), (int) getyCoord() - 5 + imageHeight, imageWidth, 3);
         return rect;
     }
 }

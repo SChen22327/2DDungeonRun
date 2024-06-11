@@ -18,25 +18,18 @@ public class Tile {
             collision = false;
         }
     }
-    // if false, player has NOT collided
-    public boolean collided(Rectangle rect, int i) {
-//        Rectangle r = rect;
-//        switch (i) {
-//            case 1:
-//                r.x++;
-//            case 2:
-//                r.x--;
-//            case 3:
-//                r.y--;
-//            case 4:
-//                r.y++;
-//        }
-//        if (tileRect() == null) {
-//            return false;
-//        }
-//        return tileRect().intersects(rect);
+    public boolean collided() {
         return collision;
     }
+
+    public int getxCoord() {
+        return (int) xCoord;
+    }
+
+    public int getyCoord() {
+        return (int)yCoord;
+    }
+
     public Rectangle tileRect() {
         if (collision) {
             return new Rectangle((int) xCoord, (int) yCoord, 48, 48);
@@ -45,6 +38,15 @@ public class Tile {
     }
     @Override
     public String toString() {
-        return type + "";
+        switch (type) {
+            case 0:
+                return "wall";
+            case 1:
+                return "walk";
+            case 2:
+                return "door";
+            default:
+                return "tile";
+        }
     }
 }

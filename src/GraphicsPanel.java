@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GraphicsPanel extends JPanel implements KeyListener, MouseListener, ActionListener {
+    private ArrayList<BufferedImage> hearts;
     private ArrayList<Map> maps;
     private int map;
     private ArrayList<ArrayList<Tile>> walkable;
     private BufferedImage background;
     private Player player;
+    private Door door;
     private boolean[] pressedKeys;
 
     public GraphicsPanel() {
@@ -26,11 +28,17 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             }
         }
         map = 0;
+        hearts = new ArrayList<>();
+        try {
+            hearts.add(ImageIO.read(new File("assets/heart_blank.png")));
+            hearts.add(ImageIO.read(new File("assets/heart_full.png")));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         //https://www.youtube.com/@RyiSnow
         //https://stackoverflow.com/questions/15940328/jpanel-animated-background
         player = new Player();
         loadMap();
-        player.newMap(walkable);
         pressedKeys = new boolean[128];
         addKeyListener(this);
         addMouseListener(this);
@@ -41,23 +49,21 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        checkLevel();
 
         g.drawImage(background,  -player.getxCoord() + 384, -player.getyCoord() + 288, null);
+        g.drawImage(door.getImg(),door.getxCoord() + 384,door.getyCoord() + 288,null);
 
         if (player.getDir().equals("left")) {
             g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
         } else {
             g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
         }
-//        g.drawImage(background,  0, 0, null);
-//
-//        if (player.getDir().equals("left")) {
-//            g.drawImage(player.getPlayerImage(), player.getxCoord() + player.getWidth() / 2, player.getyCoord() - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
-//        } else {
-//            g.drawImage(player.getPlayerImage(), player.getxCoord() - player.getWidth() / 2, player.getyCoord() - player.getHeight() / 2, null);
-//        }
-
-
+        int x = 0;
+        for (int i = 0; i < player.getHealth(); i++) {
+            g.drawImage(hearts.get(1), x, 0, null);
+            x += 20;
+        }
         // player moves left (A)
         if (pressedKeys[65]) {
             player.sendState("left;walk");
@@ -90,12 +96,20 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public void loadMap() {
         background = maps.get(map).getBG();
         walkable = maps.get(map).loadMap();
+        player.newMap(walkable);
+        for (ArrayList<Tile> a : walkable) {
+            for (Tile t : a) {
+                if (t instanceof Door) {
+                    door = (Door) t;
+                }
+            }
+        }
     }
     public void checkLevel() {
-//        if (true) {
-//            map++;
-//            player.reset();
-//        }
+        if (player.playerRect().intersects(door.doorRect())) {
+            map++;
+            loadMap();
+        }
     }
 
     // ----- KeyListener interface methods -----

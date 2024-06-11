@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Player {
     private final double MOVE_AMT = .2;
     private int health;
-    private int[] currentTile;
+    private Weapon weapon;
     private double xCoord;
     private double yCoord;
     private ArrayList<ArrayList<Tile>> walkable;
@@ -17,12 +17,13 @@ public class Player {
     private Animation currentAnimation;
     private BufferedImage staticIMG;
     public Player() {
+        weapon = new Weapon();
         try {
             staticIMG = ImageIO.read(new File("assets/Wolf animations/wolf_Static.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        health = 3;
+        health = 6;
         state = "right;idle";
         reset();
         createAnimations();
@@ -108,9 +109,15 @@ public class Player {
     }
     public void newMap(ArrayList<ArrayList<Tile>> t) {
         walkable = t;
+        reset();
     }
 
-    public void attack
+    public Rectangle attack() {
+        return weapon.getRect((int) xCoord,(int) yCoord);
+    }
+    public int getHealth() {
+        return health;
+    }
     public void takeDMG() {
         health -= 1;
         if (health == 0) {
@@ -145,7 +152,6 @@ public class Player {
             currentAnimation = getAnimation("death");
             currentAnimation.play();
         }
-        currentTile = new int[]{(int) xCoord / 48, (int) yCoord / 48};
     }
     public void sendState(String s) {
         state = s;
@@ -157,39 +163,30 @@ public class Player {
         return state.substring(0, state.indexOf(";"));
     }
     public void reset() {
-        currentTile = new int[]{2,2};
-        xCoord = 96;
-        yCoord = 96;
+        xCoord = 288;
+        yCoord = 288;
     }
     public void moveRight() {
-        if (xCoord < (walkable.get(0).size() - 1) * 48 && canMove(1)) {
+        if (canMove(1)) {
             xCoord += MOVE_AMT;
-        } else {
-            xCoord--;
         }
     }
 
     public void moveLeft() {
-        if (xCoord > 48 && canMove(2)) {
+        if (canMove(2)) {
             xCoord -= MOVE_AMT;
-        } else {
-            xCoord++;
         }
     }
 
     public void moveUp() {
-        if (yCoord > 48 && canMove(3)) {
+        if (canMove(3)) {
             yCoord -= MOVE_AMT;
-        } else {
-            yCoord++;
         }
     }
 
     public void moveDown() {
-        if (yCoord < (walkable.size() - 1) * 48 && canMove(4)) {
+        if (canMove(4)) {
             yCoord += MOVE_AMT;
-        } else {
-            yCoord--;
         }
     }
 
@@ -197,16 +194,20 @@ public class Player {
         switch (i) {
             //right
             case 1:
-                return !walkable.get(currentTile[1]).get(currentTile[0] + 1).collided(playerRect(), 1);
+                int col = (int) (xCoord + 2) / 48;
+                return !walkable.get((int) yCoord / 48).get(col).collided();
             //left
             case 2:
-                return !walkable.get(currentTile[1]).get(currentTile[0] - 1).collided(playerRect(), 2);
+                col = (int) (xCoord - 2) / 48;
+                return !walkable.get((int) yCoord / 48).get(col).collided();
             //up
             case 3:
-                return !walkable.get(currentTile[1] - 1).get(currentTile[0]).collided(playerRect(), 3);
+                int row = (int) (yCoord - 2) / 48;
+                return !walkable.get(row).get((int) xCoord / 48).collided();
             //down
             case 4:
-                return !walkable.get(currentTile[1] + 1).get(currentTile[0]).collided(playerRect(), 4);
+                row = (int) (yCoord + 2) / 48;
+                return !walkable.get(row).get((int) xCoord / 48).collided();
         }
         return false;
     }
@@ -223,11 +224,7 @@ public class Player {
 
     // we use a "bounding Rectangle" for detecting collision
     public Rectangle playerRect() {
-        int imageHeight = getHeight();
-        int imageWidth = getWidth();
-        int addX = (imageWidth - 13) / 4;
-        int addY = (imageHeight - 26);
-        Rectangle rect = new Rectangle((int) xCoord + addX - imageWidth/2, (int) yCoord + addY - imageHeight/2, 17, 26);
+        Rectangle rect = new Rectangle((int) xCoord - getWidth() / 2, (int) yCoord - getHeight() / 4, 17, 26);
         return rect;
     }
 }
