@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player {
-    private final double MOVE_AMT = .2;
+    private final double MOVE_AMT = .4;
     private int health;
     private Weapon weapon;
     private double xCoord;
@@ -134,26 +134,23 @@ public class Player {
         return (int) yCoord;
     }
     public void checkState() {
-        if (getState().equals("idle")) {
-            currentAnimation = getAnimation("idle");
-            currentAnimation.play();
-        }
-        if (getState().equals("walk")) {
-            currentAnimation = getAnimation("walk");
-            currentAnimation.play();
-        }
-        if (getState().equals("attack")) {
-            currentAnimation = getAnimation("attack");
-            currentAnimation.play();
-        }
-        if (getState().equals("hurt")) {
-            currentAnimation = getAnimation("hurt");
-            currentAnimation.play();
-        }
         if (getState().equals("death")) {
             currentAnimation = getAnimation("death");
             currentAnimation.play();
+        } else if (getState().equals("hurt")) {
+            currentAnimation = getAnimation("hurt");
+            currentAnimation.play();
+        } else if (getState().equals("attack")) {
+            currentAnimation = getAnimation("attack");
+            currentAnimation.play();
+        } else if (getState().equals("walk")) {
+            currentAnimation = getAnimation("walk");
+            currentAnimation.play();
+        } else if (getState().equals("idle")) {
+            currentAnimation = getAnimation("idle");
+            currentAnimation.play();
         }
+
     }
     public void sendState(String s) {
         state = s;
@@ -217,11 +214,11 @@ public class Player {
         return currentAnimation.getActiveFrame();
     }
     public int getHeight() {
-        return currentAnimation.getActiveFrame().getHeight();
+        return staticIMG.getHeight();
     }
 
     public int getWidth() {
-        return currentAnimation.getActiveFrame().getWidth();
+        return staticIMG.getWidth();
     }
 
     // we use a "bounding Rectangle" for detecting collision

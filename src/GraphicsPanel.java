@@ -135,15 +135,14 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     }
 
     // ----- MouseListener interface methods -----
-    public void mouseClicked(MouseEvent e) { }
+    public void mouseClicked(MouseEvent e) {
+    }
 
     public void mousePressed(MouseEvent e) { } // unimplemented
 
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {  // left mouse click
-
-        } else {
-
+            player.attack();
         }
     }
 
