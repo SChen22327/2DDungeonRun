@@ -17,8 +17,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private Player player;
     private Door door;
     private boolean[] pressedKeys;
-
+    private boolean attacking
     public GraphicsPanel() {
+        attacking = false;
         maps = new ArrayList<>();
         for (int i = 0; i < new File("assets/Maps").list().length; i++) {
             try {
@@ -94,7 +95,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             player.sendState(player.getDir() + ";walk");
             player.moveDown();
         }
-        if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83])) {
+
+        if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83] || attacking)) {
             player.sendState(player.getDir() + ";idle");
         }
         player.checkState();
