@@ -25,7 +25,7 @@ public class Door extends Tile {
     public Rectangle doorRect() {
         int imageHeight = open.getHeight();
         int imageWidth = open.getWidth();
-        Rectangle rect = new Rectangle((int) getxCoord(), (int) getyCoord() - 5 + imageHeight, imageWidth, 3);
+        Rectangle rect = new Rectangle(getxCoord(), getyCoord() - 5 + imageHeight, imageWidth, 3);
         return rect;
     }
 }

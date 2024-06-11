@@ -59,10 +59,17 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         } else {
             g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
         }
+
         int x = 0;
         for (int i = 0; i < player.getHealth(); i++) {
             g.drawImage(hearts.get(1), x, 0, null);
             x += 20;
+        }
+        if (player.getHealth() < 6) {
+            for (int i = 0; i < 6 - player.getHealth(); i++) {
+                g.drawImage(hearts.get(0),x,0,null);
+                x += 20;
+            }
         }
         // player moves left (A)
         if (pressedKeys[65]) {

@@ -113,12 +113,14 @@ public class Player {
     }
 
     public Rectangle attack() {
+        sendState(getDir() + ";attack");
         return weapon.getRect((int) xCoord,(int) yCoord);
     }
     public int getHealth() {
         return health;
     }
     public void takeDMG() {
+        sendState(getDir() + ";hurt");
         health -= 1;
         if (health == 0) {
             sendState(getDir() + ";death");
