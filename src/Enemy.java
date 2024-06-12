@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Enemy extends Entity {
     private ArrayList<AnimationInfo> animations;
     public Enemy(int xCoord, int yCoord, BufferedImage img) {
-        super(xCoord, yCoord, "assets/Dino/0/idle/tile000.png", 3, 4);
+        super(xCoord, yCoord, "assets/Dino/0/idle/tile000.png", 3, 6);
         state = "right;idle";
         createAnimations();
     }

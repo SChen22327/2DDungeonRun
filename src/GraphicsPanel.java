@@ -118,6 +118,16 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     }
 
     public void loadMap() {
+        background = maps.get(map).getBG();
+        walkable = maps.get(map).loadMap();
+        player.newMap(walkable);
+        for (ArrayList<Tile> a : walkable) {
+            for (Tile t : a) {
+                if (t instanceof Door) {
+                    door = (Door) t;
+                }
+            }
+        }
         enemies = new ArrayList<>();
         switch (map) {
             case 1:
@@ -129,16 +139,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                 }
-        }
-        background = maps.get(map).getBG();
-        walkable = maps.get(map).loadMap();
-        player.newMap(walkable);
-        for (ArrayList<Tile> a : walkable) {
-            for (Tile t : a) {
-                if (t instanceof Door) {
-                    door = (Door) t;
-                }
-            }
+            case 2:
+
         }
         if (enemies.isEmpty()) {
             door.open();

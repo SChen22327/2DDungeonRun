@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Player extends Entity {
     private Weapon weapon;
     public Player() {
-        super(144, 144, "assets/Wolf animations/wolf_Static.png", 6, 0.2);
+        super(144, 144, "assets/Wolf animations/wolf_Static.png", 6, 0.5);
         weapon = new Weapon();
         state = "right;idle";
         reset();
