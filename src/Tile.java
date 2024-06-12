@@ -12,11 +12,14 @@ public class Tile {
         xCoord = x;
         yCoord = y;
         type = i;
-        if (i == 0) {
-            collision = true;
+        if (i == 0 || i == 2) {
+            setCollision(true);
         } else {
-            collision = false;
+            setCollision(false);
         }
+    }
+    public void setCollision(boolean b) {
+        collision = b;
     }
     public boolean collided() {
         return collision;

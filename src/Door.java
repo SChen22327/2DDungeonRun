@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class Door extends Tile {
     private BufferedImage open;
     private BufferedImage closed;
+    //true for open, false for closed
+    private boolean state;
     public Door(double x, double y){
         //accidentally swapped them around and too lazy to fix
         super(y, x, 2);
@@ -17,16 +19,25 @@ public class Door extends Tile {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+        state = false;
     }
-
+    public void open() {
+        state = true;
+        setCollision(false);
+    }
     public BufferedImage getImg() {
-        return open;
+        if (state) {
+            return open;
+        }
+        return closed;
     }
 
     public Rectangle doorRect() {
-        int imageHeight = open.getHeight();
-        int imageWidth = open.getWidth();
-        Rectangle rect = new Rectangle(getxCoord(), getyCoord() - 5 + imageHeight, imageWidth, 3);
-        return rect;
+        if (state) {
+            int imageWidth = open.getWidth();
+            Rectangle rect = new Rectangle(getxCoord(), getyCoord() + 43, imageWidth, 1);
+            return rect;
+        }
+        return null;
     }
 }

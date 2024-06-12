@@ -7,13 +7,13 @@ import java.util.ArrayList;
 
 public class Enemy extends Entity {
     private ArrayList<AnimationInfo> animations;
-    private int health;
-    private Animation currentAnimation;
-    public Enemy(double xCoord, double yCoord, BufferedImage img) {
-        super(xCoord, yCoord, img);
+    public Enemy(int xCoord, int yCoord, BufferedImage img) {
+        super(xCoord, yCoord, "assets/Dino/0/idle/tile000.png", 3, 4);
+        state = "right;idle";
+        createAnimations();
     }
 
-    private void createAnimations() {
+    public void createAnimations() {
         health = 3;
         animations = new ArrayList<AnimationInfo>();
         Animation newAnimation;
@@ -88,8 +88,25 @@ public class Enemy extends Entity {
         health -= dmg;
     }
 
+    public void move() {
+        int i = (int) (Math.random() * 4);
+        switch (i) {
+            case 0:
+                sendState(getDir() + ";walk");
+                moveUp();
+            case 1:
+                sendState(getDir() + ";walk");
+                moveDown();
+            case 2:
+                sendState("left;walk");
+                moveLeft();
+            case 3:
+                sendState("right;walk");
+                moveRight();
+        }
+    }
     @Override
     public Rectangle rect() {
-        return new Rectangle((int) getxCoord(),(int) getyCoord(), 24, 24);
+        return new Rectangle((int) xCoord,(int) yCoord, 24, 24);
     }
 }

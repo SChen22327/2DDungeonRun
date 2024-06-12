@@ -5,31 +5,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Player {
-    private final double MOVE_AMT = .4;
-    private int health;
+public class Player extends Entity {
     private Weapon weapon;
-    private double xCoord;
-    private double yCoord;
-    private ArrayList<ArrayList<Tile>> walkable;
-    private String state;
-    private ArrayList<AnimationInfo> animations;
-    private Animation currentAnimation;
-    private BufferedImage staticIMG;
     public Player() {
+        super(144, 144, "assets/Wolf animations/wolf_Static.png", 6, 0.2);
         weapon = new Weapon();
-        try {
-            staticIMG = ImageIO.read(new File("assets/Wolf animations/wolf_Static.png"));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-        health = 6;
         state = "right;idle";
         reset();
         createAnimations();
     }
 
-    private void createAnimations() {
+    public void createAnimations() {
         animations = new ArrayList<AnimationInfo>();
         Animation newAnimation;
         //idle
@@ -99,22 +85,7 @@ public class Player {
         newAnimation = new Animation(death, 20);
         animations.add(new AnimationInfo("death", newAnimation));
     }
-    private String currentAnimationName() {
-        for (AnimationInfo a : animations) {
-            if (a.getAnimation() == currentAnimation) {
-                return a.getName();
-            }
-        }
-        return null;
-    }
-    private Animation getAnimation(String name) {
-        for (AnimationInfo a : animations) {
-            if (a.getName().equals(name)) {
-                return a.getAnimation();
-            }
-        }
-        return currentAnimation;
-    }
+
     public void newMap(ArrayList<ArrayList<Tile>> t) {
         walkable = t;
         reset();
@@ -124,22 +95,17 @@ public class Player {
         sendState(getDir() + ";attack");
         return weapon.getRect((int) xCoord,(int) yCoord);
     }
-    public int getHealth() {
-        return health;
-    }
-    public void takeDMG() {
-        sendState(getDir() + ";hurt");
-        health -= 1;
-        if (health == 0) {
-            sendState(getDir() + ";death");
-        }
-    }
-    public int getxCoord() {
-        return (int) xCoord;
-    }
 
-    public int getyCoord() {
-        return (int) yCoord;
+    public void reset() {
+        if (GraphicsPanel.map == 0) {
+            xCoord = 288;
+            yCoord = 288;
+        }
+        if (GraphicsPanel.map == 1) {
+            xCoord = 528;
+            yCoord = 624;
+        }
+
     }
     public void sendState(String s) {
         state = s;
@@ -160,74 +126,12 @@ public class Player {
             currentAnimation.play();
         }
     }
-    public String getState() {
-        return state.substring(state.indexOf(";") + 1);
-    }
-    public String getDir() {
-        return state.substring(0, state.indexOf(";"));
-    }
-    public void reset() {
-        xCoord = 288;
-        yCoord = 288;
-    }
-
     public boolean attacking() {
         return !currentAnimation.finished() && currentAnimationName().equals("attack");
     }
-    public void moveRight() {
-        if (canMove(1)) {
-            xCoord += MOVE_AMT;
-        }
-    }
 
-    public void moveLeft() {
-        if (canMove(2)) {
-            xCoord -= MOVE_AMT;
-        }
-    }
-
-    public void moveUp() {
-        if (canMove(3)) {
-            yCoord -= MOVE_AMT;
-        }
-    }
-
-    public void moveDown() {
-        if (canMove(4)) {
-            yCoord += MOVE_AMT;
-        }
-    }
-
-    private boolean canMove(int i) {
-        switch (i) {
-            //right
-            case 1:
-                int col = (int) (xCoord + 2) / 48;
-                return !walkable.get((int) yCoord / 48).get(col).collided();
-            //left
-            case 2:
-                col = (int) (xCoord - 2) / 48;
-                return !walkable.get((int) yCoord / 48).get(col).collided();
-            //up
-            case 3:
-                int row = (int) (yCoord - 2) / 48;
-                return !walkable.get(row).get((int) xCoord / 48).collided();
-            //down
-            case 4:
-                row = (int) (yCoord + 2) / 48;
-                return !walkable.get(row).get((int) xCoord / 48).collided();
-        }
-        return false;
-    }
     public BufferedImage getPlayerImage() {
         return currentAnimation.getActiveFrame();
-    }
-    public int getHeight() {
-        return staticIMG.getHeight();
-    }
-
-    public int getWidth() {
-        return staticIMG.getWidth();
     }
 
     // we use a "bounding Rectangle" for detecting collision

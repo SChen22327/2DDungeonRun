@@ -11,13 +11,16 @@ import java.util.Scanner;
 public class GraphicsPanel extends JPanel implements KeyListener, MouseListener, ActionListener {
     private ArrayList<BufferedImage> hearts;
     private ArrayList<Map> maps;
-    private int map;
+    public static int map = 0;
     private ArrayList<ArrayList<Tile>> walkable;
     private BufferedImage background;
     private Player player;
+    private ArrayList<Enemy> enemies;
     private Door door;
     private boolean[] pressedKeys;
+    private Timer timer;
     public GraphicsPanel() {
+        timer = new Timer(1500,this);
         maps = new ArrayList<>();
         for (int i = 0; i < new File("assets/Maps").list().length; i++) {
             try {
@@ -26,7 +29,6 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 System.out.println(e.getMessage());
             }
         }
-        map = 0;
         hearts = new ArrayList<>();
         try {
             hearts.add(ImageIO.read(new File("assets/heart_blank.png")));
@@ -50,8 +52,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         super.paintComponent(g);
         checkLevel();
 
-        g.drawImage(background,  -player.getxCoord() + 384, -player.getyCoord() + 288, null);
-        g.drawImage(door.getImg(),door.getxCoord() + 384,door.getyCoord() + 288,null);
+        g.drawImage(background,   - (int) player.xCoord + 384, - (int) player.yCoord + 288, null);
+        g.drawImage(door.getImg(),door.getxCoord() - (int) player.xCoord + 384,door.getyCoord() - (int) player.yCoord + 288,null);
 
         if (player.getDir().equals("left")) {
             g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
@@ -59,16 +61,21 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
         }
 
-        Graphics2D g2 = (Graphics2D) g;
-        g2.draw(player.playerRect());
-        g2.draw(door.doorRect());
+        for (Enemy e : enemies) {
+            if (e.getDir().equals("left")) {
+                g.drawImage(e.getImg(), (int) e.xCoord - (int) player.xCoord + e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord, -e.getWidth(), e.getHeight(), null);
+            } else {
+                g.drawImage(e.getImg(), (int) e.xCoord - (int) player.xCoord + 384 - e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight() / 2, null);
+            }
+        }
+
         int x = 0;
-        for (int i = 0; i < player.getHealth(); i++) {
+        for (int i = 0; i < player.health; i++) {
             g.drawImage(hearts.get(1), x, 0, null);
             x += 20;
         }
-        if (player.getHealth() < 6) {
-            for (int i = 0; i < 6 - player.getHealth(); i++) {
+        if (player.health < 6) {
+            for (int i = 0; i < 6 - player.health; i++) {
                 g.drawImage(hearts.get(0),x,0,null);
                 x += 20;
             }
@@ -111,6 +118,18 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     }
 
     public void loadMap() {
+        enemies = new ArrayList<>();
+        switch (map) {
+            case 1:
+                try {
+                    enemies.add(new Enemy(288, 192, ImageIO.read(new File("assets/Dino/0/idle/tile000.png"))));
+                    enemies.add(new Enemy(background.getWidth() - 288, 192, ImageIO.read(new File("assets/Dino/0/idle/tile000.png"))));
+                    enemies.add(new Enemy(288, background.getHeight() - 240, ImageIO.read(new File("assets/Dino/0/idle/tile000.png"))));
+                    enemies.add(new Enemy(background.getWidth() - 288, background.getHeight() - 240, ImageIO.read(new File("assets/Dino/0/idle/tile000.png"))));
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+        }
         background = maps.get(map).getBG();
         walkable = maps.get(map).loadMap();
         player.newMap(walkable);
@@ -121,9 +140,12 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 }
             }
         }
+        if (enemies.isEmpty()) {
+            door.open();
+        }
     }
     public void checkLevel() {
-        if (player.playerRect().intersects(door.doorRect())) {
+        if (door.doorRect() != null && player.playerRect().intersects(door.doorRect())) {
             map++;
             loadMap();
         }
@@ -161,6 +183,12 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public void mouseExited(MouseEvent e) { } // unimplemented
 
     public void actionPerformed(ActionEvent e) {
-
+        if (e.getSource() instanceof Timer) {
+            if (!enemies.isEmpty()) {
+                for (Enemy enemy : enemies) {
+                    enemy.move();
+                }
+            }
+        }
     }
 }
