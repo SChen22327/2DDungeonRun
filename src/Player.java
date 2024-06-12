@@ -70,7 +70,7 @@ public class Player {
                 System.out.println(e.getMessage());
             }
         }
-        newAnimation = new Animation(attack,20);
+        newAnimation = new Animation(attack,10);
         animations.add(new AnimationInfo("attack", newAnimation));
         //hurt
         ArrayList<BufferedImage> hurt = new ArrayList<>();
@@ -98,6 +98,14 @@ public class Player {
         }
         newAnimation = new Animation(death, 20);
         animations.add(new AnimationInfo("death", newAnimation));
+    }
+    private String currentAnimationName() {
+        for (AnimationInfo a : animations) {
+            if (a.getAnimation() == currentAnimation) {
+                return a.getName();
+            }
+        }
+        return null;
     }
     private Animation getAnimation(String name) {
         for (AnimationInfo a : animations) {
@@ -133,7 +141,8 @@ public class Player {
     public int getyCoord() {
         return (int) yCoord;
     }
-    public void checkState() {
+    public void sendState(String s) {
+        state = s;
         if (getState().equals("death")) {
             currentAnimation = getAnimation("death");
             currentAnimation.play();
@@ -150,10 +159,6 @@ public class Player {
             currentAnimation = getAnimation("idle");
             currentAnimation.play();
         }
-
-    }
-    public void sendState(String s) {
-        state = s;
     }
     public String getState() {
         return state.substring(state.indexOf(";") + 1);
@@ -164,6 +169,10 @@ public class Player {
     public void reset() {
         xCoord = 288;
         yCoord = 288;
+    }
+
+    public boolean attacking() {
+        return !currentAnimation.finished() && currentAnimationName().equals("attack");
     }
     public void moveRight() {
         if (canMove(1)) {

@@ -30,4 +30,8 @@ public class MainPanel implements Runnable {
             panel.repaint();  // we don't ever call "paintComponent" directly, but call this to refresh the panel
         }
     }
+
+    public static void main(String[] args) {
+        MainPanel m = new MainPanel();
+    }
 }

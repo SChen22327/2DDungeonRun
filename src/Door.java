@@ -9,7 +9,8 @@ public class Door extends Tile {
     private BufferedImage open;
     private BufferedImage closed;
     public Door(double x, double y){
-        super(x, y, 2);
+        //accidentally swapped them around and too lazy to fix
+        super(y, x, 2);
         try {
             open = ImageIO.read(new File("assets/Dungeon Gathering/door.png"));
             closed = ImageIO.read(new File("assets/Dungeon Gathering/closed.png"));

@@ -17,9 +17,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private Player player;
     private Door door;
     private boolean[] pressedKeys;
-    private boolean attacking
     public GraphicsPanel() {
-        attacking = false;
         maps = new ArrayList<>();
         for (int i = 0; i < new File("assets/Maps").list().length; i++) {
             try {
@@ -61,6 +59,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
         }
 
+        Graphics2D g2 = (Graphics2D) g;
+        g2.draw(player.playerRect());
+        g2.draw(door.doorRect());
         int x = 0;
         for (int i = 0; i < player.getHealth(); i++) {
             g.drawImage(hearts.get(1), x, 0, null);
@@ -74,32 +75,39 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         }
         // player moves left (A)
         if (pressedKeys[65]) {
-            player.sendState("left;walk");
+            if (!player.attacking()) {
+                player.sendState("left;walk");
+            }
             player.moveLeft();
         }
 
         // player moves right (D)
         if (pressedKeys[68]) {
-            player.sendState("right;walk");
+            if (!player.attacking()) {
+                player.sendState("right;walk");
+            }
             player.moveRight();
         }
 
         // player moves up (W)
         if (pressedKeys[87]) {
-            player.sendState(player.getDir() + ";walk");
+            if (!player.attacking()) {
+                player.sendState(player.getDir() + ";walk");
+            }
             player.moveUp();
         }
 
         // player moves down (S)
         if (pressedKeys[83]) {
-            player.sendState(player.getDir() + ";walk");
+            if (!player.attacking()) {
+                player.sendState(player.getDir() + ";walk");
+            }
             player.moveDown();
         }
 
-        if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83] || attacking)) {
+        if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83] || player.attacking())) {
             player.sendState(player.getDir() + ";idle");
         }
-        player.checkState();
     }
 
     public void loadMap() {
