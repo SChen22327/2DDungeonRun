@@ -11,6 +11,6 @@ public class Weapon {
     }
 
     public Rectangle getRect(int x, int y) {
-        return new Rectangle(x,y, 1,30);
+        return new Rectangle(x,y, 27,30);
     }
 }

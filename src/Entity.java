@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Entity {
+    public String filepath;
     public final double MOVE_AMT;
     public int health;
     public String state;
     public double xCoord;
     public double yCoord;
-    public ArrayList<ArrayList<Tile>> walkable;
     public ArrayList<AnimationInfo> animations;
     public Animation currentAnimation;
     public BufferedImage staticIMG;
@@ -19,12 +19,13 @@ public class Entity {
         this.MOVE_AMT = MOVE_AMT;
         this.xCoord = xCoord;
         this.yCoord = yCoord;
+        this.filepath = filepath;
+        this.health = health;
         try {
-            staticIMG = ImageIO.read(new File(filepath));
+            staticIMG = ImageIO.read(new File(filepath + "/static.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        this.health = health;
     }
 
     public String getState() {
@@ -40,19 +41,21 @@ public class Entity {
     }
 
     public void sendState(String s) {
-        state = s;
-        if (getState().equals("death")) {
-            currentAnimation = getAnimation("death");
-            currentAnimation.play();
-        } else if (getState().equals("hurt")) {
-            currentAnimation = getAnimation("hurt");
-            currentAnimation.play();
-        } else if (getState().equals("walk")) {
-            currentAnimation = getAnimation("walk");
-            currentAnimation.play();
-        } else if (getState().equals("idle")) {
-            currentAnimation = getAnimation("idle");
-            currentAnimation.play();
+        if (currentAnimation.finished()) {
+            state = s;
+            if (getState().equals("death")) {
+                currentAnimation = getAnimation("death");
+                currentAnimation.play();
+            } else if (getState().equals("hurt")) {
+                currentAnimation = getAnimation("hurt");
+                currentAnimation.play();
+            } else if (getState().equals("walk")) {
+                currentAnimation = getAnimation("walk");
+                currentAnimation.play();
+            } else if (getState().equals("idle")) {
+                currentAnimation = getAnimation("idle");
+                currentAnimation.play();
+            }
         }
     }
     public Animation getAnimation(String name) {
@@ -99,25 +102,75 @@ public class Entity {
         switch (i) {
             //right
             case 1:
-                int col = (int) (xCoord + 2) / 48;
-                return !walkable.get((int) yCoord / 48).get(col).collided();
+                int col = (int) (xCoord + MOVE_AMT) / 48;
+                return !GraphicsPanel.walkable.get((int) yCoord / 48).get(col).collided();
             //left
             case 2:
-                col = (int) (xCoord - 2) / 48;
-                return !walkable.get((int) yCoord / 48).get(col).collided();
+                col = (int) (xCoord - MOVE_AMT) / 48;
+                return !GraphicsPanel.walkable.get((int) yCoord / 48).get(col).collided();
             //up
             case 3:
-                int row = (int) (yCoord - 2) / 48;
-                return !walkable.get(row).get((int) xCoord / 48).collided();
+                int row = (int) (yCoord - MOVE_AMT) / 48;
+                return !GraphicsPanel.walkable.get(row).get((int) xCoord / 48).collided();
             //down
             case 4:
-                row = (int) (yCoord + 2) / 48;
-                return !walkable.get(row).get((int) xCoord / 48).collided();
+                row = (int) (yCoord + MOVE_AMT) / 48;
+                return !GraphicsPanel.walkable.get(row).get((int) xCoord / 48).collided();
         }
         return false;
     }
 
-    public void createAnimations() {}
+    public void createAnimations() {animations = new ArrayList<AnimationInfo>();
+        Animation newAnimation;
+        //idle
+        ArrayList<BufferedImage> idle = new ArrayList<>();
+        for (File f : new File(filepath + "/idle/").listFiles()) {
+            try {
+                idle.add(ImageIO.read(f));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(idle, 20);
+        animations.add(new AnimationInfo("idle", newAnimation));
+        currentAnimation = newAnimation;
+        // walk
+        ArrayList<BufferedImage> walk = new ArrayList<>();
+        for (File f : new File(filepath + "/walk/").listFiles()) {
+            try {
+                walk.add(ImageIO.read(f));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(walk,20);
+        animations.add(new AnimationInfo("walk", newAnimation));
+        //hurt
+        ArrayList<BufferedImage> hurt = new ArrayList<>();
+        for (File f : new File(filepath + "/hurt/").listFiles()) {
+            try {
+                hurt.add(ImageIO.read(f));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(hurt,20);
+        animations.add(new AnimationInfo("hurt", newAnimation));
+        //death
+        ArrayList<BufferedImage> death = new ArrayList<>();
+        for (File f : new File(filepath + "/death/").listFiles()) {
+            try {
+                death.add(ImageIO.read(f));
+            }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        newAnimation = new Animation(death,20);
+        animations.add(new AnimationInfo("death", newAnimation));}
     public String currentAnimationName() {
         for (AnimationInfo a : animations) {
             if (a.getAnimation() == currentAnimation) {

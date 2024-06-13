@@ -1,11 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class MainPanel implements Runnable {
+public class Main implements Runnable {
 
     private GraphicsPanel panel;
 
-    public MainPanel () {
+    public Main() {
         JFrame frame = new JFrame("Dungeon Run");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -26,12 +26,24 @@ public class MainPanel implements Runnable {
     }
 
     public void run() {
+        double drawInterval = 1000000000/60;
+        double delta = 0;
+        long lastTime = System.nanoTime();
+        long currentTime;
+
         while (true) {
-            panel.repaint();  // we don't ever call "paintComponent" directly, but call this to refresh the panel
+            currentTime = System.nanoTime();
+            delta += (currentTime - lastTime) / drawInterval;
+            lastTime = currentTime;
+
+            if (delta >= 1) {
+                panel.repaint();  // we don't ever call "paintComponent" directly, but call this to refresh the panel
+                delta--;
+            }
         }
     }
 
     public static void main(String[] args) {
-        MainPanel m = new MainPanel();
+        Main m = new Main();
     }
 }
