@@ -7,16 +7,20 @@ import java.util.ArrayList;
 
 public class Player extends Entity {
     private Weapon weapon;
-    private int invincible;
+    public boolean invincible;
+    public int counter;
     public Player() {
         super(144, 144, "assets/Wolf", 6, 7);
         weapon = new Weapon();
         state = "right;idle";
-        invincible = 0;
+        invincible = false;
+        counter = 0;
         reset();
         createAnimations();
     }
-
+    public boolean dead() {
+        return health == 0 && currentAnimation.finished();
+    }
     public void newMap() {
         reset();
     }
@@ -33,6 +37,12 @@ public class Player extends Entity {
             }
         }
         animations.add(new AnimationInfo("attack", new Animation(attack,10)));
+    }
+
+    @Override
+    public void takeDMG() {
+        super.takeDMG();
+        invincible = true;
     }
 
     public void reset() {
@@ -65,9 +75,6 @@ public class Player extends Entity {
             currentAnimation.play();
         }
     }
-    public boolean invincible() {
-        return true;
-    }
     public boolean attacking() {
         return !currentAnimation.finished() && currentAnimationName().equals("attack");
     }
@@ -80,12 +87,11 @@ public class Player extends Entity {
         String dir = getDir();
         sendState(dir + ";attack");
         if (dir.equals("left")) {
-            return weapon.getRect((int) xCoord - getWidth(),(int) yCoord - getHeight() / 4);
+            return weapon.getRect((int) xCoord - getWidth() - 10,(int) yCoord - getHeight() / 4);
         }
-        return weapon.getRect((int) xCoord - 10, (int) yCoord);
+        return weapon.getRect((int) xCoord - 10, (int) yCoord - getHeight() / 4);
     }
     public Rectangle playerRect() {
-        Rectangle rect = new Rectangle((int) xCoord - getWidth() / 2, (int) yCoord - getHeight() / 4, 17, 26);
-        return rect;
+        return new Rectangle((int) xCoord - getWidth() / 2, (int) yCoord - getHeight() / 4, 17, 26);
     }
 }

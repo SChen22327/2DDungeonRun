@@ -47,77 +47,98 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        checkLevel();
-
         g.drawImage(background, -(int) player.xCoord + 384, -(int) player.yCoord + 288, null);
         g.drawImage(door.getImg(), door.getxCoord() - (int) player.xCoord + 384, door.getyCoord() - (int) player.yCoord + 288, null);
 
-        if (player.getDir().equals("left")) {
-            g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
-        } else {
-            g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
-        }
+        if (!player.dead()){
+            checkLevel();
 
-        for (int i = 0; i < enemies.size(); i++) {
-            Enemy e = enemies.get(i);
-            if (e.health == 0 && e.currentAnimation.finished()) {
-                enemies.remove(i);
-                i--;
+            Graphics2D g2 = (Graphics2D) g;
+
+            if (player.getDir().equals("left")) {
+                g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
             } else {
-                e.move();
-                if (e.getDir().equals("left")) {
-                    g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord, -e.getWidth(), e.getHeight(), null);
+                g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
+            }
+            g2.draw(player.playerRect());
+
+            for (int i = 0; i < enemies.size(); i++) {
+                Enemy e = enemies.get(i);
+                if (e.health == 0 && e.currentAnimation.finished()) {
+                    enemies.remove(i);
+                    i--;
                 } else {
-                    g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + 384 - e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight() / 2, null);
+                    e.move();
+                    if (e.getDir().equals("left")) {
+                        g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord, -e.getWidth(), e.getHeight(), null);
+                    } else {
+                        g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + 384 - e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight() / 2, null);
+                    }
+                    g2.draw(e.rect());
                 }
             }
-        }
 
-        int x = 0;
-        for (int i = 0; i < player.health; i++) {
-            g.drawImage(hearts.get(1), x, 0, null);
-            x += 20;
-        }
-        if (player.health < 6) {
-            for (int i = 0; i < 6 - player.health; i++) {
-                g.drawImage(hearts.get(0), x, 0, null);
+            int x = 0;
+            for (int i = 0; i < player.health; i++) {
+                g.drawImage(hearts.get(1), x, 0, null);
                 x += 20;
             }
-        }
-        // player moves left (A)
-        if (pressedKeys[65]) {
-            if (!player.attacking()) {
-                player.sendState("left;walk");
+            if (player.health < 6) {
+                for (int i = 0; i < 6 - player.health; i++) {
+                    g.drawImage(hearts.get(0), x, 0, null);
+                    x += 20;
+                }
             }
-            player.moveLeft();
-        }
-
-        // player moves right (D)
-        if (pressedKeys[68]) {
-            if (!player.attacking()) {
-                player.sendState("right;walk");
+            // player moves left (A)
+            if (pressedKeys[65]) {
+                if (!player.attacking()) {
+                    player.sendState("left;walk");
+                }
+                player.moveLeft();
             }
-            player.moveRight();
-        }
 
-        // player moves up (W)
-        if (pressedKeys[87]) {
-            if (!player.attacking()) {
-                player.sendState(player.getDir() + ";walk");
+            // player moves right (D)
+            if (pressedKeys[68]) {
+                if (!player.attacking()) {
+                    player.sendState("right;walk");
+                }
+                player.moveRight();
             }
-            player.moveUp();
-        }
 
-        // player moves down (S)
-        if (pressedKeys[83]) {
-            if (!player.attacking()) {
-                player.sendState(player.getDir() + ";walk");
+            // player moves up (W)
+            if (pressedKeys[87]) {
+                if (!player.attacking()) {
+                    player.sendState(player.getDir() + ";walk");
+                }
+                player.moveUp();
             }
-            player.moveDown();
-        }
 
-        if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83] || player.attacking())) {
-            player.sendState(player.getDir() + ";idle");
+            // player moves down (S)
+            if (pressedKeys[83]) {
+                if (!player.attacking()) {
+                    player.sendState(player.getDir() + ";walk");
+                }
+                player.moveDown();
+            }
+
+            if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83] || player.attacking())) {
+                player.sendState(player.getDir() + ";idle");
+            }
+
+            for (Enemy e : enemies) {
+                if (player.playerRect().intersects(e.rect())) {
+                    if (player.invincible) {
+                        player.counter++;
+                        if (player.counter > 100) {
+                            player.invincible = false;
+                            player.counter = 0;
+                        }
+                    }
+                    if (!(player.invincible || e.health == 0)) {
+                        player.takeDMG();
+                    }
+                }
+            }
         }
     }
 
@@ -175,13 +196,15 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public void mousePressed(MouseEvent e) { } // unimplemented
 
     public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {  // left mouse click
-             Rectangle r = player.attack();
-             for (Enemy enemy : enemies) {
-                 if (r.intersects(enemy.rect())) {
-                     enemy.takeDMG();
-                 }
-             }
+        if (!player.dead()) {
+            if (e.getButton() == MouseEvent.BUTTON1) {  // left mouse click
+                Rectangle r = player.attack();
+                for (Enemy enemy : enemies) {
+                    if (r.intersects(enemy.rect())) {
+                        enemy.takeDMG();
+                    }
+                }
+            }
         }
     }
 

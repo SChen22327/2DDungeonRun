@@ -6,11 +6,7 @@ public class Weapon {
         dmg = 1;
     }
 
-    public int getDmg() {
-        return dmg;
-    }
-
     public Rectangle getRect(int x, int y) {
-        return new Rectangle(x,y, 27,30);
+        return new Rectangle(x,y, 36,30);
     }
 }

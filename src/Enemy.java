@@ -38,7 +38,7 @@ public class Enemy extends Entity {
     }
     @Override
     public Rectangle rect() {
-        return new Rectangle((int) xCoord + 6, (int) yCoord + 6, 36, 36);
+        return new Rectangle((int) xCoord + 6 - getWidth() / 2, (int) yCoord + 6 - getHeight() / 2, 36, 36);
     }
 
 }

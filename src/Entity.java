@@ -68,9 +68,10 @@ public class Entity {
     }
     public void takeDMG() {
         sendState(getDir() + ";hurt");
-        health--;
         if (health == 0) {
             sendState(getDir() + ";death");
+        } else {
+            health--;
         }
     }
 
