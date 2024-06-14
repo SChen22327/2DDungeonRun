@@ -53,28 +53,30 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         if (!player.dead()){
             checkLevel();
 
-            Graphics2D g2 = (Graphics2D) g;
 
             if (player.getDir().equals("left")) {
                 g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
             } else {
                 g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
             }
-            g2.draw(player.playerRect());
 
             for (int i = 0; i < enemies.size(); i++) {
                 Enemy e = enemies.get(i);
-                if (e.health == 0 && e.currentAnimation.finished()) {
+                if (e.dead()) {
                     enemies.remove(i);
                     i--;
                 } else {
-                    e.move();
                     if (e.getDir().equals("left")) {
                         g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord, -e.getWidth(), e.getHeight(), null);
                     } else {
                         g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + 384 - e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight() / 2, null);
                     }
-                    g2.draw(e.rect());
+                    e.move();
+                    if (e.getDir().equals("left")) {
+                        e.sendState("left;walk");
+                    } else {
+                        e.sendState("right;walk");
+                    }
                 }
             }
 
@@ -91,7 +93,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             }
             // player moves left (A)
             if (pressedKeys[65]) {
-                if (!player.attacking()) {
+                if (!(player.attacking() || player.hurt())) {
                     player.sendState("left;walk");
                 }
                 player.moveLeft();
@@ -99,7 +101,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 
             // player moves right (D)
             if (pressedKeys[68]) {
-                if (!player.attacking()) {
+                if (!(player.attacking() || player.hurt())) {
                     player.sendState("right;walk");
                 }
                 player.moveRight();
@@ -107,7 +109,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 
             // player moves up (W)
             if (pressedKeys[87]) {
-                if (!player.attacking()) {
+                if (!(player.attacking() || player.hurt())) {
                     player.sendState(player.getDir() + ";walk");
                 }
                 player.moveUp();
@@ -115,13 +117,13 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 
             // player moves down (S)
             if (pressedKeys[83]) {
-                if (!player.attacking()) {
+                if (!(player.attacking() || player.hurt())) {
                     player.sendState(player.getDir() + ";walk");
                 }
                 player.moveDown();
             }
 
-            if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83] || player.attacking())) {
+            if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83] || player.attacking() || player.hurt())) {
                 player.sendState(player.getDir() + ";idle");
             }
 

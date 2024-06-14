@@ -18,9 +18,6 @@ public class Player extends Entity {
         reset();
         createAnimations();
     }
-    public boolean dead() {
-        return health == 0 && currentAnimation.finished();
-    }
     public void newMap() {
         reset();
     }

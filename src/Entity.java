@@ -75,6 +75,14 @@ public class Entity {
         }
     }
 
+    public boolean hurt() {
+        return !currentAnimation.finished() && currentAnimationName().equals("hurt");
+    }
+
+    public boolean dead() {
+        return health == 0 && currentAnimation.finished();
+    }
+
     public void moveRight() {
         if (canMove(1)) {
             xCoord += MOVE_AMT;
@@ -99,6 +107,11 @@ public class Entity {
         }
     }
 
+    public void knockback() {
+        if (canMove(5)) {
+
+        }
+    }
     private boolean canMove(int i) {
         switch (i) {
             //right
@@ -117,6 +130,9 @@ public class Entity {
             case 4:
                 row = (int) (yCoord + MOVE_AMT) / 48;
                 return !GraphicsPanel.walkable.get(row).get((int) xCoord / 48).collided();
+            case 5:
+                String dir = getDir();
+
         }
         return false;
     }

@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 public class Enemy extends Entity {
     private Player player;
     public Enemy(int xCoord, int yCoord, Player player) {
-        super(xCoord, yCoord, "assets/Dino", 3, 4.5);
+        super(xCoord, yCoord, "assets/Dino", 3, 1); //norm spd is 4.5, just for test
         state = "right;idle";
         this.player = player;
         createAnimations();
@@ -21,11 +21,9 @@ public class Enemy extends Entity {
             float angle = (float) Math.atan2(diffY, diffX);
             xCoord += MOVE_AMT * Math.cos(angle);
             yCoord += MOVE_AMT * Math.sin(angle);
-            if (getDir().equals("left")) {
-                sendState("left;walk");
-            } else {
-                sendState("right;walk");
-            }
+
+        } else {
+            sendState(getDir() + ";idle");
         }
     }
 
