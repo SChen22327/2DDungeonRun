@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 public class Enemy extends Entity {
     private Player player;
     public Enemy(int xCoord, int yCoord, Player player) {
-        super(xCoord, yCoord, "assets/Dino", 3, 1); //norm spd is 4.5, just for test
+        super(xCoord, yCoord, "assets/Dino", 3, 4);
         state = "right;idle";
         this.player = player;
         createAnimations();

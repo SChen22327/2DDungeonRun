@@ -10,7 +10,7 @@ public class Player extends Entity {
     public boolean invincible;
     public int counter;
     public Player() {
-        super(144, 144, "assets/Wolf", 6, 7);
+        super(144, 144, "assets/Wolf", 6, 6);
         weapon = new Weapon();
         state = "right;idle";
         invincible = false;
