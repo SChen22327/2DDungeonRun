@@ -26,6 +26,7 @@ public class Entity {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+        state = "right;idle";
     }
 
     public String getState() {
@@ -41,21 +42,19 @@ public class Entity {
     }
 
     public void sendState(String s) {
-        if (currentAnimation.finished()) {
-            state = s;
-            if (getState().equals("death")) {
-                currentAnimation = getAnimation("death");
-                currentAnimation.play();
-            } else if (getState().equals("hurt")) {
-                currentAnimation = getAnimation("hurt");
-                currentAnimation.play();
-            } else if (getState().equals("walk")) {
-                currentAnimation = getAnimation("walk");
-                currentAnimation.play();
-            } else if (getState().equals("idle")) {
-                currentAnimation = getAnimation("idle");
-                currentAnimation.play();
-            }
+        state = s;
+        if (getState().equals("death")) {
+            currentAnimation = getAnimation("death");
+            currentAnimation.play();
+        } else if (getState().equals("hurt")) {
+            currentAnimation = getAnimation("hurt");
+            currentAnimation.play();
+        } else if (getState().equals("walk")) {
+            currentAnimation = getAnimation("walk");
+            currentAnimation.play();
+        } else if (getState().equals("idle")) {
+            currentAnimation = getAnimation("idle");
+            currentAnimation.play();
         }
     }
     public Animation getAnimation(String name) {

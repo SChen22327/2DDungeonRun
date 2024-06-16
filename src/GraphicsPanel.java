@@ -67,16 +67,11 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     i--;
                 } else {
                     if (e.getDir().equals("left")) {
-                        g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord, -e.getWidth(), e.getHeight(), null);
+                        g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + 384 + e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight()/2, -e.getWidth(), e.getHeight(), null);
                     } else {
                         g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + 384 - e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight() / 2, null);
                     }
                     e.move();
-                    if (e.getDir().equals("left")) {
-                        e.sendState("left;walk");
-                    } else {
-                        e.sendState("right;walk");
-                    }
                 }
             }
 

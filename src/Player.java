@@ -12,7 +12,6 @@ public class Player extends Entity {
     public Player() {
         super(144, 144, "assets/Wolf", 6, 6);
         weapon = new Weapon();
-        state = "right;idle";
         invincible = false;
         counter = 0;
         reset();

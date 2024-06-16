@@ -4,8 +4,7 @@ import java.awt.image.BufferedImage;
 public class Enemy extends Entity {
     private Player player;
     public Enemy(int xCoord, int yCoord, Player player) {
-        super(xCoord, yCoord, "assets/Dino", 3, 4);
-        state = "right;idle";
+        super(xCoord, yCoord, "assets/Dino", 3, 4.5);
         this.player = player;
         createAnimations();
     }
@@ -21,7 +20,11 @@ public class Enemy extends Entity {
             float angle = (float) Math.atan2(diffY, diffX);
             xCoord += MOVE_AMT * Math.cos(angle);
             yCoord += MOVE_AMT * Math.sin(angle);
-
+            if (angle > Math.PI / 2 || angle < -(Math.PI / 2)) {
+                sendState("left;walk");
+            } else {
+                sendState("right;walk");
+            }
         } else {
             sendState(getDir() + ";idle");
         }
