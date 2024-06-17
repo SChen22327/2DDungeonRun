@@ -13,6 +13,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public static int map = 0;
     public static ArrayList<ArrayList<Tile>> walkable;
     private BufferedImage background;
+    private Animation gameover;
     private Player player;
     private ArrayList<Enemy> enemies;
     private Door door;
@@ -26,6 +27,16 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 System.out.println(e.getMessage());
             }
         }
+        ArrayList<BufferedImage> go = new ArrayList<>();
+        for (File f : new File("assets/GameOver").listFiles()) {
+            try {
+                go.add(ImageIO.read(f));
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        gameover = new Animation(go,20);
+        gameover.play();
         hearts = new ArrayList<>();
         try {
             hearts.add(ImageIO.read(new File("assets/heart_blank.png")));
@@ -47,12 +58,12 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(background, -(int) player.xCoord + 384, -(int) player.yCoord + 288, null);
-        g.drawImage(door.getImg(), door.getxCoord() - (int) player.xCoord + 384, door.getyCoord() - (int) player.yCoord + 288, null);
 
         if (!player.dead()){
             checkLevel();
 
+            g.drawImage(background, -(int) player.xCoord + 384, -(int) player.yCoord + 288, null);
+            g.drawImage(door.getImg(), door.getxCoord() - (int) player.xCoord + 384, door.getyCoord() - (int) player.yCoord + 288, null);
 
             if (player.getDir().equals("left")) {
                 g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
@@ -60,66 +71,71 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 g.drawImage(player.getPlayerImage(), 384 - player.getWidth() / 2, 288 - player.getHeight() / 2, null);
             }
 
-            for (int i = 0; i < enemies.size(); i++) {
-                Enemy e = enemies.get(i);
-                if (e.dead()) {
-                    enemies.remove(i);
-                    i--;
-                } else {
-                    if (e.getDir().equals("left")) {
-                        g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + 384 + e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight()/2, -e.getWidth(), e.getHeight(), null);
+            if (player.health != 0) {
+                for (int i = 0; i < enemies.size(); i++) {
+                    Enemy e = enemies.get(i);
+                    if (e.dead()) {
+                        enemies.remove(i);
+                        i--;
                     } else {
-                        g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + 384 - e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight() / 2, null);
+                        if (e.getDir().equals("left")) {
+                            g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + 384 + e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight() / 2, -e.getWidth(), e.getHeight(), null);
+                        } else {
+                            g.drawImage(e.getEnemyImage(), (int) e.xCoord - (int) player.xCoord + 384 - e.getWidth() / 2, (int) e.yCoord - (int) player.yCoord + 288 - e.getHeight() / 2, null);
+                        }
+                        e.move();
                     }
-                    e.move();
                 }
-            }
 
-            int x = 0;
-            for (int i = 0; i < player.health; i++) {
-                g.drawImage(hearts.get(1), x, 0, null);
-                x += 20;
-            }
-            if (player.health < 6) {
-                for (int i = 0; i < 6 - player.health; i++) {
-                    g.drawImage(hearts.get(0), x, 0, null);
+                int x = 0;
+                for (int i = 0; i < player.health; i++) {
+                    g.drawImage(hearts.get(1), x, 0, null);
                     x += 20;
                 }
-            }
-            // player moves left (A)
-            if (pressedKeys[65]) {
-                if (!(player.attacking() || player.hurt())) {
-                    player.sendState("left;walk");
+                if (player.health < 5) {
+                    for (int i = 0; i < 5 - player.health; i++) {
+                        g.drawImage(hearts.get(0), x, 0, null);
+                        x += 20;
+                    }
                 }
-                player.moveLeft();
-            }
+                if (!player.hurt()) {// player moves left (A)
+                    if (pressedKeys[65]) {
+                        if (!(player.attacking() || player.hurt())) {
+                            player.sendState("left;walk");
+                        }
+                        player.moveLeft();
+                    }
 
-            // player moves right (D)
-            if (pressedKeys[68]) {
-                if (!(player.attacking() || player.hurt())) {
-                    player.sendState("right;walk");
+                    // player moves right (D)
+                    if (pressedKeys[68]) {
+                        if (!(player.attacking() || player.hurt())) {
+                            player.sendState("right;walk");
+                        }
+                        player.moveRight();
+                    }
+
+                    // player moves up (W)
+                    if (pressedKeys[87]) {
+                        if (!(player.attacking() || player.hurt())) {
+                            player.sendState(player.getDir() + ";walk");
+                        }
+                        player.moveUp();
+                    }
+
+                    // player moves down (S)
+                    if (pressedKeys[83]) {
+                        if (!(player.attacking() || player.hurt())) {
+                            player.sendState(player.getDir() + ";walk");
+                        }
+                        player.moveDown();
+                    }
+
+                    if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83] || player.attacking() || player.hurt())) {
+                        player.sendState(player.getDir() + ";idle");
+                    }
                 }
-                player.moveRight();
-            }
-
-            // player moves up (W)
-            if (pressedKeys[87]) {
-                if (!(player.attacking() || player.hurt())) {
-                    player.sendState(player.getDir() + ";walk");
-                }
-                player.moveUp();
-            }
-
-            // player moves down (S)
-            if (pressedKeys[83]) {
-                if (!(player.attacking() || player.hurt())) {
-                    player.sendState(player.getDir() + ";walk");
-                }
-                player.moveDown();
-            }
-
-            if (!(pressedKeys[65] || pressedKeys[68] || pressedKeys[87] || pressedKeys[83] || player.attacking() || player.hurt())) {
-                player.sendState(player.getDir() + ";idle");
+            } else {
+                enemies.clear();
             }
 
             for (Enemy e : enemies) {
@@ -134,8 +150,20 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     if (!(player.invincible || e.health == 0)) {
                         player.takeDMG();
                     }
+                    if (player.hurt()) {
+                        double diffX = e.xCoord - player.xCoord;
+                        double diffY = e.yCoord - player.yCoord;
+                        float angle = (float) Math.atan2(diffY, diffX);
+                        player.xCoord -= player.KB_AMT * Math.cos(angle);
+                        player.yCoord -= player.KB_AMT * Math.sin(angle);
+                    }
                 }
             }
+        } else {
+            if (gameover.finished()) {
+                gameover.play();
+            }
+            g.drawImage(gameover.getActiveFrame(), -gameover.getActiveFrame().getWidth() / 4 + 72, 0, null);
         }
     }
 

@@ -8,7 +8,9 @@ import java.util.ArrayList;
 public class Entity {
     public String filepath;
     public final double MOVE_AMT;
+    public final double KB_AMT = 2.5; //knockback amount
     public int health;
+    public boolean dead;
     public String state;
     public double xCoord;
     public double yCoord;
@@ -79,7 +81,10 @@ public class Entity {
     }
 
     public boolean dead() {
-        return health == 0 && currentAnimation.finished();
+        if (health == 0 && currentAnimation.finished()) {
+            dead = true;
+        }
+        return dead;
     }
 
     public void moveRight() {
@@ -106,12 +111,7 @@ public class Entity {
         }
     }
 
-    public void knockback() {
-        if (canMove(5)) {
-
-        }
-    }
-    private boolean canMove(int i) {
+    public boolean canMove(int i) {
         switch (i) {
             //right
             case 1:
@@ -129,9 +129,6 @@ public class Entity {
             case 4:
                 row = (int) (yCoord + MOVE_AMT) / 48;
                 return !GraphicsPanel.walkable.get(row).get((int) xCoord / 48).collided();
-            case 5:
-                String dir = getDir();
-
         }
         return false;
     }

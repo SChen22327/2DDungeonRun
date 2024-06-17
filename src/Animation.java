@@ -18,19 +18,12 @@ public class Animation implements ActionListener {
     public void play() {
         timer.start();
     }
-    public boolean playing() {
-        return currentFrame != frames.size() - 1;
-    }
     public boolean finished() {
         return currentFrame == frames.size() - 1;
     }
 
     public int getCurrentFrame() {
         return currentFrame;
-    }
-
-    public ArrayList<BufferedImage> getFrames() {
-        return frames;
     }
 
     public BufferedImage getActiveFrame() {

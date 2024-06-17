@@ -10,7 +10,7 @@ public class Player extends Entity {
     public boolean invincible;
     public int counter;
     public Player() {
-        super(144, 144, "assets/Wolf", 6, 6);
+        super(144, 144, "assets/Wolf", 1, 6);
         weapon = new Weapon();
         invincible = false;
         counter = 0;
@@ -35,11 +35,11 @@ public class Player extends Entity {
         animations.add(new AnimationInfo("attack", new Animation(attack,10)));
     }
 
-    @Override
     public void takeDMG() {
         super.takeDMG();
         invincible = true;
     }
+
 
     public void reset() {
         if (GraphicsPanel.map == 0) {
