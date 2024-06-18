@@ -10,7 +10,7 @@ public class Player extends Entity {
     public boolean invincible;
     public int counter;
     public Player() {
-        super(144, 144, "assets/Wolf", 1, 6);
+        super(144, 144, "assets/Wolf", 5, 6);
         weapon = new Weapon();
         invincible = false;
         counter = 0;
@@ -50,7 +50,10 @@ public class Player extends Entity {
             xCoord = 528;
             yCoord = 624;
         }
-
+        if (GraphicsPanel.map == 2) {
+            xCoord = 48;
+            yCoord = 480;
+        }
     }
     public void sendState(String s) {
         state = s;

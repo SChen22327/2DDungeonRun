@@ -8,6 +8,11 @@ public class Enemy extends Entity {
         this.player = player;
         createAnimations();
     }
+    public Enemy(int xCoord, int yCoord, Player player, boolean b) {
+        super(xCoord, yCoord, "assets/Dino", 5, 3.5);
+        this.player = player;
+        createAnimations();
+    }
 
     public void createAnimations() {
         super.createAnimations();

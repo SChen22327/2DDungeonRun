@@ -35,8 +35,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 System.out.println(e.getMessage());
             }
         }
-        gameover = new Animation(go,20);
-        gameover.play();
+        gameover = new Animation(go,10);
         hearts = new ArrayList<>();
         try {
             hearts.add(ImageIO.read(new File("assets/heart_blank.png")));
@@ -59,11 +58,13 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (!player.dead()){
+        if (!player.dead() && (map != 2 || !enemies.isEmpty())){
             checkLevel();
 
             g.drawImage(background, -(int) player.xCoord + 384, -(int) player.yCoord + 288, null);
-            g.drawImage(door.getImg(), door.getxCoord() - (int) player.xCoord + 384, door.getyCoord() - (int) player.yCoord + 288, null);
+            if (map != 2) {
+                g.drawImage(door.getImg(), door.getxCoord() - (int) player.xCoord + 384, door.getyCoord() - (int) player.yCoord + 288, null);
+            }
 
             if (player.getDir().equals("left")) {
                 g.drawImage(player.getPlayerImage(), 384 + player.getWidth() / 2, 288 - player.getHeight() / 2, -player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight(), null);
@@ -159,11 +160,16 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     }
                 }
             }
-        } else {
-            if (gameover.finished()) {
-                gameover.play();
-            }
+        } else if (player.dead()) {
+            gameover.play();
             g.drawImage(gameover.getActiveFrame(), -gameover.getActiveFrame().getWidth() / 4 + 72, 0, null);
+        } else {
+            try {
+                BufferedImage win = ImageIO.read(new File("assets/win.png"));
+                g.drawImage(win, -win.getWidth() / 4 + 72, 0, null);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
@@ -171,12 +177,16 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         background = maps.get(map).getBG();
         walkable = maps.get(map).loadMap();
         player.newMap();
-        for (ArrayList<Tile> a : walkable) {
-            for (Tile t : a) {
-                if (t instanceof Door) {
-                    door = (Door) t;
+        if (map != 2) {
+            for (ArrayList<Tile> a : walkable) {
+                for (Tile t : a) {
+                    if (t instanceof Door) {
+                        door = (Door) t;
+                    }
                 }
             }
+        } else {
+            door = null;
         }
         enemies = new ArrayList<>();
         switch (map) {
@@ -185,17 +195,29 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 enemies.add(new Enemy(background.getWidth() - 288, 192, player));
                 enemies.add(new Enemy(288, background.getHeight() - 240, player));
                 enemies.add(new Enemy(background.getWidth() - 288, background.getHeight() - 240, player));
+                break;
             case 2:
-
-        }
-        if (enemies.isEmpty()) {
-            door.open();
+                enemies.add(new Enemy(144, 144, player));
+                enemies.add(new Enemy(288, 288, player));
+                enemies.add(new Enemy(384, 288, player));
+                enemies.add(new Enemy(1392, 288, player, true));
+                enemies.add(new Enemy(1392, 576, player, true));
+                enemies.add(new Enemy(1680, 288, player, true));
+                enemies.add(new Enemy(1680, 576, player, true));
+                break;
+            default:
+                break;
         }
     }
     public void checkLevel() {
-        if (door.doorRect() != null && player.playerRect().intersects(door.doorRect())) {
-            map++;
-            loadMap();
+        if (map != 2) {
+            if (enemies.isEmpty()) {
+                door.open();
+            }
+            if (door.doorRect() != null && player.playerRect().intersects(door.doorRect())) {
+                map++;
+                loadMap();
+            }
         }
     }
 
